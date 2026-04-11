@@ -32,11 +32,14 @@ services:
       wp:
         condition: service_healthy
     environment:
-      SITE_URL: ${SITE_URL}
-      SITE_TITLE: ${SITE_TITLE}
+      SITE_URL: ${SITE_URL:-http://localhost:${FORWARD_WEB_PORT:-8080}}
+      SITE_TITLE: ${SITE_TITLE:-"WordPress Local"}
       SITE_ADMIN_USER: ${SITE_ADMIN_USER}
       SITE_ADMIN_PASS: ${SITE_ADMIN_PASS}
       SITE_ADMIN_EMAIL: ${SITE_ADMIN_EMAIL}
+      SITE_PLUGINS: ${SITE_PLUGINS:-}
+      SITE_THEMES: ${SITE_THEMES:-}
+      SITE_DEFAULT_THEME: ${SITE_DEFAULT_THEME:-}
       WORDPRESS_DB_HOST: db
       WORDPRESS_DB_USER: ${DB_USER}
       WORDPRESS_DB_PASSWORD: ${DB_PASS}
