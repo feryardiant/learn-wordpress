@@ -19,6 +19,9 @@ echo "Initializing default Options..."
 wp option update permalink_structure "/%postname%/"
 wp option update timezone_string "${SITE_TIMEZONE}"
 
+custom_theme_path=$(wp theme path)/${SITE_DEFAULT_THEME}
+cp $custom_theme_path/favicon.ico .
+
 echo "Initializing default Plugins..."
 for plugin in ${SITE_PLUGINS//,/ }; do
     if wp plugin is-installed "$plugin"; then
