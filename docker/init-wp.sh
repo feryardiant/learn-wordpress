@@ -44,4 +44,10 @@ done
 
 wp theme activate ${SITE_DEFAULT_THEME}
 
+echo "Cleanup..."
+
+wp plugin uninstall hello
+
+wp theme uninstall twentytwentythree twentytwentyfour twentytwentyfive
+
 echo "Site URL: ${SITE_URL}"
