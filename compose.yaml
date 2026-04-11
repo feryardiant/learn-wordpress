@@ -1,6 +1,11 @@
+x-healthcheck: &healthcheck
+  interval: 5s
+  timeout: 5s
+  retries: 3
+
 services:
   wp:
-    image: wordpress:6.9-php8.4-apache
+    image: wordpress:6.9-php{PHP_VERSION:-8.4}-apache
     depends_on:
       db:
         condition: service_healthy
@@ -15,9 +20,36 @@ services:
       - ./volumes/wordpress:/var/www/html
     healthcheck:
       test: ["CMD", "curl", "-f", "http://localhost"]
-      interval: 5s
-      timeout: 5s
-      retries: 5
+      <<: *healthcheck
+
+  cli:
+    image: wordpress:cli-php{PHP_VERSION:-8.4}
+    user: '33'
+    command: [
+      "wp", "core", "install",
+      "--url=${SITE_URL}",
+      "--title=${SITE_TITLE}",
+      "--admin_user=${SITE_ADMIN_USER}",
+      "--admin_password=${SITE_ADMIN_PASS}",
+      "--admin_email=${SITE_ADMIN_EMAIL}"
+    ]
+    depends_on:
+      db:
+        condition: service_healthy
+      wp:
+        condition: service_healthy
+    volumes:
+      - ./volumes/wordpress:/var/www/html
+    environment:
+      WORDPRESS_DB_HOST: db
+      WORDPRESS_DB_USER: ${DB_USER}
+      WORDPRESS_DB_PASSWORD: ${DB_PASS}
+      WORDPRESS_DB_NAME: ${DB_NAME}
+      SITE_URL: ${SITE_URL}
+      SITE_TITLE: ${SITE_TITLE}
+      SITE_ADMIN_USER: ${SITE_ADMIN_USER}
+      SITE_ADMIN_PASS: ${SITE_ADMIN_PASS}
+      SITE_ADMIN_EMAIL: ${SITE_ADMIN_EMAIL}
 
   db:
     image: mysql:8.0
@@ -30,9 +62,7 @@ services:
       - ./volumes/mysql:/var/lib/mysql
     healthcheck:
       test: ["CMD", "mysqladmin" ,"ping", "-h", "localhost"]
-      interval: 5s
-      timeout: 5s
-      retries: 5
+      <<: *healthcheck
 
 networks:
   default:
