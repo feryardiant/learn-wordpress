@@ -45,6 +45,16 @@ done
 
 wp theme activate ${SITE_DEFAULT_THEME}
 
+if [[ ${MULTISITE_ENABLED} -eq 1 ]]; then
+    echo "Initializing multisite..."
+
+    # https://developer.wordpress.org/advanced-administration/server/web-server/httpd/#multisite
+    cat /var/www/public/.htaccess.multisite > .htaccess
+    echo 'Update .htaccess.'
+
+    wp core multisite-convert
+fi
+
 echo "Cleanup..."
 
 wp plugin uninstall hello
