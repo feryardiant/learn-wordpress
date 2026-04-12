@@ -48,6 +48,6 @@ echo "Cleanup..."
 
 wp plugin uninstall hello
 
-wp theme uninstall twentytwentythree twentytwentyfour twentytwentyfive
+wp theme uninstall twentytwentythree twentytwentyfour
 
 echo "Site URL: ${SITE_URL}"
