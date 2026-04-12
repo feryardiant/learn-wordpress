@@ -48,6 +48,7 @@ services:
       SITE_DEFAULT_THEME: ${SITE_DEFAULT_THEME:-}
     volumes:
       - ./docker/volumes/wordpress:/var/www/html
+      - ./public:/var/www/public
       - ./packages/custom-theme:/var/www/html/wp-content/themes/custom-theme:ro
       - ./docker/init-wp.sh:/usr/local/bin/init-wp:ro
 
