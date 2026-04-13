@@ -8,7 +8,7 @@ x-wp-envs: &wp-envs
   WORDPRESS_DB_USER: ${DB_USER:-wordpress}
   WORDPRESS_DB_PASSWORD: ${DB_PASS:-secret}
   WORDPRESS_DB_NAME: ${DB_NAME:-wordpress}
-  # WORDPRESS_DEBUG: ${WORDPRESS_DEBUG:-0}
+  WORDPRESS_DEBUG: ${SITE_DEBUG:-0}
 
 services:
   wp:

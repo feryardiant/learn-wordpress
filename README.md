@@ -27,6 +27,7 @@ DB_NAME=wordpress
 SITE_URL=http://localhost:8080
 SITE_TITLE="WP Evaluation Site"
 SITE_TIMEZONE="Asia/Jakarta"
+SITE_DEBUG=0 # Set to 1 to enable WordPress debug mode
 SITE_ADMIN_USER=admin
 SITE_ADMIN_PASS=password
 SITE_ADMIN_EMAIL=admin@example.com
