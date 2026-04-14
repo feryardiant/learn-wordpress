@@ -20,3 +20,16 @@ function custom_theme_mailer_init( WP_PHPMailer $mailer ) {
 
 	$mailer->isSMTP();
 }
+
+require_once get_stylesheet_directory() . '/integrations/contact-form-7.php';
+
+add_action( 'switch_theme', 'custom_theme_deactivation', 10, 0 );
+add_action( 'after_switch_theme', 'custom_theme_activation', 10, 0 );
+
+function custom_theme_activation() {
+	do_action( 'ct_activation' );
+}
+
+function custom_theme_deactivation() {
+	do_action( 'ct_deactivation' );
+}
