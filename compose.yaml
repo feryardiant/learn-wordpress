@@ -49,6 +49,16 @@ services:
       SITE_THEMES: ${SITE_THEMES:-}
       SITE_DEFAULT_THEME: ${SITE_DEFAULT_THEME:-}
       MULTISITE_ENABLED: ${MULTISITE_ENABLED:-0}
+      WC_STORE_ADDRESS: ${WC_STORE_ADDRESS:-Jl. Example No. 123}
+      WC_STORE_CITY: ${WC_STORE_CITY:-Batang}
+      WC_DEFAULT_COUNTRY: ${WC_DEFAULT_COUNTRY:-ID:JT}
+      WC_CURRENCY: ${WC_CURRENCY:-IDR}
+      WC_STORE_POSTCODE: ${WC_STORE_POSTCODE:-12345}
+      WC_WEIGHT_UNIT: ${WC_WEIGHT_UNIT:-kg}
+      WC_DIMENSION_UNIT: ${WC_DIMENSION_UNIT:-cm}
+      WC_PRICE_THOUSAND_SEP: ${WC_PRICE_THOUSAND_SEP:-.}
+      WC_PRICE_DECIMAL_SEP: ${WC_PRICE_DECIMAL_SEP:-,}
+      WC_PRICE_DECIMAL_NUM: ${WC_PRICE_DECIMAL_NUM:-0}
     volumes:
       - ./docker/volumes/wordpress:/var/www/html
       - ./docker/volumes/wp-cli:/home/www-data/.wp-cli

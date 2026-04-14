@@ -38,6 +38,28 @@ done
 
 wp plugin install $plugins --activate
 
+if wp plugin is-active woocommerce; then
+    echo "Initializing default WooCommerce Settings..."
+
+    wp option update woocommerce_store_address "${WC_STORE_ADDRESS}"
+    wp option update woocommerce_store_city "${WC_STORE_CITY}"
+    wp option update woocommerce_default_country "${WC_DEFAULT_COUNTRY}"
+    wp option update woocommerce_currency "${WC_CURRENCY}"
+    wp option update woocommerce_store_postcode "${WC_STORE_POSTCODE}"
+
+    wp option update woocommerce_weight_unit "${WC_WEIGHT_UNIT:-kg}"
+    wp option update woocommerce_dimension_unit "${WC_DIMENSION_UNIT:-cm}"
+    wp option update woocommerce_price_thousand_sep "${WC_PRICE_THOUSAND_SEP:-.}"
+    wp option update woocommerce_price_decimal_sep "${WC_PRICE_DECIMAL_SEP:-,}"
+    wp option update woocommerce_price_num_decimals "${WC_PRICE_DECIMAL_NUM:-,}"
+
+    # Skip the onboarding profile
+    wp option update woocommerce_onboarding_profile '{"skipped":true}' --format=json
+
+    # Mark the task list as complete
+    wp option update woocommerce_task_list_complete yes
+fi
+
 echo "Initializing default Themes..."
 
 themes=""
