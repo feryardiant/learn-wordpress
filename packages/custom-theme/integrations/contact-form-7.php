@@ -13,7 +13,7 @@ add_action( 'init', static function() {
 		'show_in_admin_bar' => false,
 		'capability_type' => 'post',
 		'hierarchical' => false,
-		'supports' => [ 'title', 'excerpt', 'custom-fields' ],
+		'supports' => [ 'title', 'excerpt', 'author', 'custom-fields' ],
 		'rewrite' => false,
 		'query_var' => false,
 		'menu_icon' => 'dashicons-email-alt',
@@ -32,22 +32,44 @@ function ct_wpcf7_before_send_mail( WPCF7_ContactForm $contact_form ) {
 		return;
 	}
 
-	$uploaded_files = $form_data = array();
+	$form_data = array();
+	$email_field = null;
+	$phone_field = null;
+	$name_field = null;
 
-	foreach ( $submission->uploaded_files() as $field => $file ) {
-		$file = is_array( $file ) ? reset( $file ) : $file;
-		if ( empty($file) ) {
+	foreach ( $contact_form->scan_form_tags() as $tag ) {
+		/** @var WPCF7_FormTag $tag */
+		if ( in_array( $tag->basetype, [ 'submit', 'button' ] ) ) {
 			continue;
 		}
 
-		$uploaded_files[$field] = $file['tmp_name'];
+		$value = $submission->get_posted_string( $tag->name );
+
+		if ( ! empty( $value ) ) {
+			if ( in_array( 'autocomplete:email', $tag->options ) ) {
+				$email_field = $tag->name;
+			}
+
+			if ( in_array( 'autocomplete:phone', $tag->options ) ) {
+				$phone_field = $tag->name;
+			}
+
+			if ( in_array( 'autocomplete:name', $tag->options ) ) {
+				$name_field = $tag->name;
+			}
+		}
+
+		$form_data[$tag->name] = $value;
 	}
 
-	foreach ( $submission->get_posted_data() as $field => $value ) {
-		$value = ct_wpcf7_sanitize_text_value( $value );
-		$field = sanitize_text_field( $field );
+	$submitter_id = 0;
 
-		$form_data[$field] = $value;
+	if ( $email_field && $name_field && is_email( $form_data[$email_field] ) ) {
+		$submitter_id = ct_wpcf7_register_submitter(
+			$form_data[$email_field],
+			$form_data[$name_field],
+			$form_data[$phone_field],
+		);
 	}
 
 	do_action( 'ct_wpcf7_before_save', $form_data );
@@ -58,6 +80,7 @@ function ct_wpcf7_before_send_mail( WPCF7_ContactForm $contact_form ) {
 		'post_status' => 'publish',
 		'post_title' => 'Form Submission',
 		'post_parent' => $contact_form->id(),
+		'post_author' => $submitter_id,
 		// 'post_content' => wp_json_encode( $form_data ),
 		// 'post_excerpt' => wp_json_encode( $form_data ),
 	) );
@@ -69,17 +92,6 @@ function ct_wpcf7_before_send_mail( WPCF7_ContactForm $contact_form ) {
 	}
 
 	do_action( 'ct_wpcf7_after_save', $form_data );
-}
-
-function ct_wpcf7_sanitize_text_value( string|array $value ) {
-	if ( is_string( $value ) ) {
-		$bl = array('\"',"\'",'/','\\','"',"'");
-		$wl = array('&quot;','&#039;','&#047;', '&#092;','&quot;','&#039;');
-
-		return str_replace($bl, $wl, $value );
-	}
-
-	return array_map( 'ct_wpcf7_sanitize_text_value', $value );
 }
 
 function ct_wpcf7_editor_panels( array $panels ) {
@@ -142,4 +154,46 @@ function ct_wpcf7_submissions_panel( WPCF7_ContactForm $contact_form ) {
 	$formatter->end_tag( 'pre' );
 
 	$formatter->print();
+}
+
+function ct_wpcf7_register_submitter( string $email, string $name, ?string $phone = null ) {
+	if ( email_exists( $email ) ) {
+		$user = WP_User::get_data_by( 'email', $email );
+
+		return (int) $user->ID;
+	}
+
+	list( $login ) = explode( '@', $email );
+
+	$login = sanitize_user( $login );
+
+	if ( username_exists( $login ) ) {
+		$user = WP_User::get_data_by( 'login', $login );
+
+		return (int) $user->ID;
+	}
+
+	$user_data = array(
+		'user_login' => $login,
+		'user_email' => $email,
+		'display_name' => $name,
+		'user_pass' => wp_generate_password( 12, true ),
+	);
+
+	$name_parts = explode( ' ', $name );
+
+	if ( count( $name_parts ) > 1 ) {
+		$user_data['first_name'] = $name_parts[0];
+		$user_data['last_name'] = implode( ' ', array_slice( $name_parts, 1 ) );
+	}
+
+	$user_id = wp_insert_user( $user_data );
+
+	if ( ! $user_id || is_wp_error( $user_id ) ) {
+		return 0;
+	}
+
+	add_user_meta( $user_id, 'phone', $phone ?? '' );
+
+	return (int) $user_id;
 }
