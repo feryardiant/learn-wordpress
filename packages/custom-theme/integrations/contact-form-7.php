@@ -1,7 +1,9 @@
 <?php
 
 add_action( 'init', static function() {
-	register_post_type( 'form-submissions', array(
+	$post_type = 'form-submissions';
+
+	register_post_type( $post_type, array(
 		'labels' => array(
 			'name' => __( 'Submissions', 'custom-theme' ),
 			'singular_name' => __( 'Submission', 'custom-theme' ),
@@ -21,6 +23,9 @@ add_action( 'init', static function() {
 		// 	//
 		// },
 	) );
+
+	add_filter( "manage_{$post_type}_posts_columns", 'custom_theme_manage_submissions_columns', 10, 1 );
+	add_filter( "manage_{$post_type}_posts_custom_column", 'custom_theme_manage_submissions_custom_column', 10, 2 );
 } );
 
 add_action( 'wpcf7_before_send_mail', 'ct_wpcf7_before_send_mail' );
@@ -154,6 +159,32 @@ function ct_wpcf7_submissions_panel( WPCF7_ContactForm $contact_form ) {
 	$formatter->end_tag( 'pre' );
 
 	$formatter->print();
+}
+
+function custom_theme_manage_submissions_columns( array $columns ) {
+	return array(
+		'cb' => $columns['cb'],
+		'title' => $columns['title'],
+		'form' => __( 'Form', 'custom-theme' ),
+		'author' => $columns['author'],
+		'date' => $columns['date'],
+	);
+}
+
+function custom_theme_manage_submissions_custom_column( string $column, int $post_id ) {
+	if ( $column === 'form' ) {
+		$post = get_post( $post_id );
+
+		if ( ! $post->post_parent ) {
+			echo '<span aria-hidden="true">—</span><span class="screen-reader-text">(no form)</span>';
+
+			return;
+		}
+
+		$form = get_post( $post->post_parent );
+
+		echo $form->post_title;
+	}
 }
 
 function ct_wpcf7_register_submitter( string $email, string $name, ?string $phone = null ) {
