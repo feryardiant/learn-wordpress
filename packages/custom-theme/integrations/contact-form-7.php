@@ -111,6 +111,8 @@ function ct_wpcf7_before_send_mail( WPCF7_ContactForm $contact_form ) {
 		foreach ( $form_data as $field => $value ) {
 			add_post_meta( $returned_id, $field, $value );
 		}
+
+		add_post_meta( $returned_id, '_ct_submission_read', 0 );
 	}
 
 	do_action( 'ct_wpcf7_after_save', $form_data );
