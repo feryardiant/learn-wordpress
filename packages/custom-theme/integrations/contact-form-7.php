@@ -36,6 +36,10 @@ add_action( 'init', static function() {
 
 add_action( 'wpcf7_before_send_mail', 'ct_wpcf7_before_send_mail' );
 
+add_action( 'wpcf7_save_contact_form', 'ct_wpcf7_save_contact_form', 10, 3 );
+
+add_filter( 'wpcf7_pre_construct_contact_form_properties', 'ct_wpcf7_pre_construct_contact_form_properties', 10, 2 );
+
 add_filter( 'wpcf7_editor_panels', 'ct_wpcf7_editor_panels' );
 
 function ct_wpcf7_before_send_mail( WPCF7_ContactForm $contact_form ) {
@@ -44,10 +48,6 @@ function ct_wpcf7_before_send_mail( WPCF7_ContactForm $contact_form ) {
 	}
 
 	$form_data = array();
-	$email_field = null;
-	$phone_field = null;
-	$name_field = null;
-	$subject_field = null;
 
 	foreach ( $contact_form->scan_form_tags() as $tag ) {
 		/** @var WPCF7_FormTag $tag */
@@ -55,42 +55,25 @@ function ct_wpcf7_before_send_mail( WPCF7_ContactForm $contact_form ) {
 			continue;
 		}
 
-		$value = $submission->get_posted_string( $tag->name );
-
-		if ( ! empty( $value ) ) {
-			if ( in_array( 'autocomplete:email', $tag->options ) ) {
-				$email_field = $tag->name;
-			}
-
-			if ( in_array( 'autocomplete:phone', $tag->options ) ) {
-				$phone_field = $tag->name;
-			}
-
-			if ( in_array( 'autocomplete:name', $tag->options ) ) {
-				$name_field = $tag->name;
-			}
-
-			if ( in_array( 'autocomplete:subject', $tag->options ) ) {
-				$subject_field = $tag->name;
-			}
-		}
-
-		$form_data[$tag->name] = $value;
+		$form_data[$tag->name] = $submission->get_posted_string( $tag->name );
 	}
 
 	$submitter_id = 0;
+	$properties = ct_wpcf7_get_properties( $contact_form );
 
-	if ( $email_field && $name_field && is_email( $form_data[$email_field] ) ) {
-		$submitter_id = ct_wpcf7_register_submitter(
-			$form_data[$email_field],
-			$form_data[$name_field],
-			$form_data[$phone_field],
-		);
+	if ( $properties['author'] && $properties['author_email'] && $properties['author_name'] ) {
+		$author_email = $form_data[$properties['author_email']] ?? null;
+		$author_name = $form_data[$properties['author_name']] ?? null;
+		$author_phone = $form_data[$properties['author_phone']] ?? null;
+
+		if ( $author_email && $author_name && is_email( $author_email ) ) {
+			$submitter_id = ct_wpcf7_register_submitter( $author_email, $author_name, $author_phone );
+		}
 	}
 
 	do_action( 'ct_wpcf7_before_save', $form_data );
 
-	$subject_title = $subject_field ? $form_data[$subject_field] : null;
+	$subject_title = $properties['subject'] ? $form_data[$properties['subject']] : null;
 
 	// Saving the data
 	$returned_id = wp_insert_post( array(
@@ -103,8 +86,8 @@ function ct_wpcf7_before_send_mail( WPCF7_ContactForm $contact_form ) {
 		),
 		'post_parent' => $contact_form->id(),
 		'post_author' => $submitter_id,
+		'post_excerpt' => $properties['message'] ? $form_data[$properties['message']] : null,
 		// 'post_content' => wp_json_encode( $form_data ),
-		// 'post_excerpt' => wp_json_encode( $form_data ),
 	) );
 
 	if ( $returned_id ) {
@@ -118,6 +101,39 @@ function ct_wpcf7_before_send_mail( WPCF7_ContactForm $contact_form ) {
 	do_action( 'ct_wpcf7_after_save', $form_data );
 }
 
+function ct_wpcf7_pre_construct_contact_form_properties( array $properties, WPCF7_ContactForm $contact_form ) {
+	$properties['submissions'] = array();
+
+	return $properties;
+}
+
+function ct_wpcf7_save_contact_form( WPCF7_ContactForm $contact_form, array $data, string $context ) {
+	$submissions = wp_parse_args( $data['ct-wpcf7-submissions'], array() );
+
+	$contact_form->set_properties( array( 'submissions' => $submissions ) );
+}
+
+/**
+ * @param WPCF7_ContactForm $contact_form
+ * @return array{record: bool, subject: string, message: string, author: bool, author_name: string, author_email: string, author_phone: string}
+ */
+function ct_wpcf7_get_properties( WPCF7_ContactForm $contact_form ) {
+	$properties = wp_parse_args( $contact_form->prop( 'submissions' ), array(
+		'record' => null,
+		'subject' => '',
+		'message' => '',
+		'author' => null,
+		'author_name' => '',
+		'author_email' => '',
+		'author_phone' => '',
+	) );
+
+	$properties['record'] = ! is_null( $properties['record'] );
+	$properties['author'] = ! is_null( $properties['author'] );
+
+	return $properties;
+}
+
 function ct_wpcf7_editor_panels( array $panels ) {
 	$post_type_object = get_post_type_object( 'form-submissions' );
 
@@ -127,6 +143,23 @@ function ct_wpcf7_editor_panels( array $panels ) {
 	);
 
 	return $panels;
+}
+
+/**
+ * @param WP_Post $item
+ * @param 'view'|'read' $action
+ * @return string
+ */
+function ct_wpcf7_submission_link( WP_Post $item, string $action = 'view' ) {
+	$link = add_query_arg(
+		array(
+			'post' => absint( $item->ID ),
+			'action' => $action,
+		),
+		menu_page_url( 'ct-wpcf7-submissions', false )
+	);
+
+	return esc_url( $link );
 }
 
 function ct_wpcf7_submissions_panel( WPCF7_ContactForm $contact_form ) {
@@ -156,8 +189,6 @@ function ct_wpcf7_submissions_panel( WPCF7_ContactForm $contact_form ) {
 	) );
 
 	$formatter->append_start_tag( 'tbody' );
-
-	$panel_id = 'ct-wpcf7-submissions';
 
 	$mail_tags = $contact_form->collect_mail_tags();
 
@@ -224,6 +255,9 @@ function ct_wpcf7_submissions_panel( WPCF7_ContactForm $contact_form ) {
 		),
 	);
 
+	$panel_id = 'ct-wpcf7-submissions';
+	$submissions = ct_wpcf7_get_properties( $contact_form );
+
 	foreach ( $fields as $id => $field ) {
 		$field = wp_parse_args( $field, array(
 			'label' => '',
@@ -253,7 +287,7 @@ function ct_wpcf7_submissions_panel( WPCF7_ContactForm $contact_form ) {
 		$field_atts = wp_parse_args( $field['atts'], array(
 			'id' => $field_id,
 			'name' => sprintf( '%s[%s]', $panel_id, $id ),
-			'value' => null,
+			'value' => $submissions[$id] ?: null,
 		) );
 
 		$formatter->append_start_tag( 'label', array(
@@ -278,6 +312,9 @@ function ct_wpcf7_submissions_panel( WPCF7_ContactForm $contact_form ) {
 			$formatter->append_start_tag( 'label', array(
 				'for' => $field_id,
 			) );
+
+			$field_atts['value'] = 'on';
+			$field_atts['checked'] = $submissions[$id] !== null;
 		}
 
 		$formatter->append_start_tag( $field['type'], $field_atts );
@@ -285,6 +322,7 @@ function ct_wpcf7_submissions_panel( WPCF7_ContactForm $contact_form ) {
 		if ( $field['type'] === 'select' && is_array( $field['options'] ?? null ) ) {
 			$formatter->append_start_tag( 'option', array(
 				'selected' => is_null( $selected ),
+				'value' => '',
 			) );
 
 			$formatter->append_preformatted(
@@ -344,6 +382,12 @@ function ct_submissions_admin_menu() {
 
 function ct_submissions_load_page() {
 	$screen = get_current_screen();
+	$action = wpcf7_superglobal_request( 'action', null );
+
+	do_action( 'ct_submissions_admin_page_load',
+		wpcf7_superglobal_get( 'page' ),
+		$action
+	);
 
 	if ( ! class_exists( Submissions_List_Table::class ) ) {
 		require_once __DIR__ . '/class-submissions-list-table.php';

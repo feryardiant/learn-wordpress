@@ -93,26 +93,22 @@ class Submissions_List_Table extends WP_List_Table {
 	}
 
 	public function column_title( WP_Post $item ) {
-		$edit_link = add_query_arg(
-			array(
-				'post' => absint( $item->ID ),
-				'action' => 'edit',
-			),
-			menu_page_url( 'ct-wpcf7-submissions', false )
-		);
-
 		$output = sprintf(
 			'<a class="row-title" href="%1$s" aria-label="%2$s">%3$s</a>',
-			esc_url( $edit_link ),
+			ct_wpcf7_submission_link( $item ),
 			esc_attr( sprintf(
 				/* translators: %s: title of contact form */
-				__( 'Edit &#8220;%s&#8221;', 'contact-form-7' ),
+				__( 'View &#8220;%s&#8221;', 'custom-theme' ),
 				$item->post_title
 			) ),
 			esc_html( $item->post_title )
 		);
 
-		$output = sprintf( '<strong>%s</strong>', $output );
+		$read_status = (int) get_post_meta( $item->ID, '_ct_submission_read', true );
+
+		if ( $read_status === 0 ) {
+			return sprintf( '<strong>%s</strong>', $output );
+		}
 
 		return $output;
 	}
