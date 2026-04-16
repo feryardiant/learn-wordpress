@@ -258,7 +258,7 @@ function ct_submissions_admin_menu(): void {
 		'wpcf7_read_contact_forms',
 		'ct-wpcf7-submissions',
 		'ct_submissions_admin_management_page',
-		1,
+		2,
 	);
 
 	add_action(
