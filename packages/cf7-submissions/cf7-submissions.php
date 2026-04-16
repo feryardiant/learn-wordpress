@@ -22,7 +22,7 @@ define( 'WPCF7S__MINIMUM_WP_VERSION', '6.8' );
 define( 'WPCF7S__MINIMUM_PHP_VERSION', '8.1' );
 
 /**
- * Check if the version of WordPress in use on the site is supported by Jetpack.
+ * Check if the version of WordPress in use on the site is supported by Submissions Addon for Contact Form 7.
  */
 if ( version_compare( $GLOBALS['wp_version'], WPCF7S__MINIMUM_WP_VERSION, '<' ) ) {
 	if ( defined( 'WP_DEBUG' ) && WP_DEBUG ) {
