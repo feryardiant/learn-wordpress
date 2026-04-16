@@ -60,11 +60,10 @@ class List_Table extends WP_List_Table {
 			$args['orderby'] = $order_by;
 		}
 
-		if (
-			$order = \wpcf7_superglobal_request( 'order' ) and
-			'desc' === strtolower( $order )
-		) {
-			$args['order'] = 'DESC';
+		$order = strtoupper( \wpcf7_superglobal_request( 'order' ) );
+
+		if ( $order && in_array( $order, array( 'ASC', 'DESC' ), true ) ) {
+			$args['order'] = $order;
 		}
 
 		$q = new WP_Query();
