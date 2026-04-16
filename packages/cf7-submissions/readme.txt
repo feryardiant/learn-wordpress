@@ -1,9 +1,10 @@
-=== Contact Form 7 Submissions ===
+=== Submissions Addon for Contact Form 7 ===
 Contributors: feryardiant
-Tags: contact form 7, cf7, submissions, database, leads, capture, form storage, contact form, cf7 database
+Tags: contact form 7, cf7 submissions, leads capture, form storage, contact form
+Donate link: https://github.com/sponsors/feryardiant
 Requires at least: 6.8
 Tested up to: 6.8
-Requires PHP: 7.4
+Requires PHP: 8.1
 Stable tag: 0.0.0
 License: GPLv3 or later
 License URI: http://www.gnu.org/licenses/gpl-3.0.html
@@ -12,7 +13,7 @@ Never lose a lead again. Save, manage, and convert every Contact Form 7 submissi
 
 == Description ==
 
-Stop relying on unreliable email notifications. **Contact Form 7 Submissions** acts as your ultimate safety net, capturing every single submission and storing it securely in your WordPress database.
+Stop relying on unreliable email notifications. **Submissions Addon for Contact Form 7** acts as your ultimate safety net, capturing every single submission and storing it securely in your WordPress database.
 
 Whether it's a server error, a spam filter, or a full inbox, you can rest easy knowing your data is safe and accessible right from your dashboard.
 
@@ -26,6 +27,11 @@ Unlike basic storage plugins, this plugin allows you to map submissions to WordP
 *   **Read/Unread Status:** Keep track of which leads you've already handled.
 *   **Per-Form Control:** Choose exactly which forms should record data and which shouldn't.
 *   **Developer Friendly:** Lightweight architecture with local SMTP support for dev environments.
+
+= Minimum Requirements =
+
+* WordPress 6.8 or greater
+* PHP version 8.1 or greater
 
 == Installation ==
 

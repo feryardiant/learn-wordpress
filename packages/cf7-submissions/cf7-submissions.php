@@ -1,6 +1,6 @@
 <?php
 /**
- * Plugin Name: Contact Form 7 Submissions
+ * Plugin Name: Submissions Addon for Contact Form 7
  * Plugin URI: https://feryardiant.id
  * Text Domain: wpcf7-submissions
  * Description: Never lose a lead again. Save, manage, and convert every Contact Form 7 submission directly in your WordPress dashboard.
@@ -29,7 +29,7 @@ if ( version_compare( $GLOBALS['wp_version'], WPCF7S__MINIMUM_WP_VERSION, '<' ) 
 		error_log( // phpcs:ignore WordPress.PHP.DevelopmentFunctions.error_log_error_log
 			sprintf(
 				/* translators: Placeholders are numbers, versions of WordPress in use on the site, and required by WordPress. */
-				esc_html__( 'Your version of WordPress (%1$s) is lower than the version required by Contact Form 7 Submissions (%2$s). Please update WordPress to continue enjoying Contact Form 7 Submissions.', 'wpcf7-submissions' ),
+				esc_html__( 'Your version of WordPress (%1$s) is lower than the version required by Submissions Addon for Contact Form 7 (%2$s). Please update WordPress to continue enjoying Submissions Addon for Contact Form 7.', 'wpcf7-submissions' ),
 				$GLOBALS['wp_version'],
 				WPCF7S__MINIMUM_WP_VERSION
 			)
@@ -39,7 +39,7 @@ if ( version_compare( $GLOBALS['wp_version'], WPCF7S__MINIMUM_WP_VERSION, '<' ) 
 	add_action( 'admin_notices', static function () {
 		?>
 		<div class="notice notice-error is-dismissible">
-			<p><?php esc_html_e( 'Contact Form 7 Submissions requires a more recent version of WordPress and has been paused. Please update WordPress to continue enjoying Contact Form 7 Submissions.', 'wpcf7-submissions' ); ?></p>
+			<p><?php esc_html_e( 'Submissions Addon for Contact Form 7 requires a more recent version of WordPress and has been paused. Please update WordPress to continue enjoying Submissions Addon for Contact Form 7.', 'wpcf7-submissions' ); ?></p>
 		</div>
 		<?php
 	} );
