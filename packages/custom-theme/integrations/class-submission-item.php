@@ -3,24 +3,66 @@
 namespace CT_WPCF7;
 
 use DateTimeImmutable;
+use WP_Error;
 use WP_Post;
 use WP_User;
 use WPCF7_ContactForm;
 
 final class Submission_Item {
+	/**
+	 * Submission Item ID.
+	 */
 	public readonly int $id;
+
+	/**
+	 * Submission Form ID.
+	 */
 	public readonly int $parent_id;
+
+	/**
+	 * Submission Author ID.
+	 */
 	public readonly int $author_id;
+
+	/**
+	 * Submission read status.
+	 * @var 0|1
+	 */
 	public readonly int $read_status;
+
+	/**
+	 * Submission title.
+	 */
 	public readonly string $title;
+
+	/**
+	 * Submission message.
+	 */
 	public readonly string $message;
+
+	/**
+	 * Submission datetime.
+	 */
 	public readonly ?DateTimeImmutable $datetime;
 
+	/**
+	 * Set the read status for a submission item.
+	 *
+	 * @param int $id
+	 * @param bool $read
+	 * @return int|WP_Error
+	 */
 	public static function set_read_status( int $id, bool $read ): int {
 		return update_post_meta( $id, '_ct_submission_read', $read ? 1 : 0 );
 	}
 
-	public static function store( Submission_Option $option, WPCF7_ContactForm $form ) {
+	/**
+	 * Store a submission for the given form and submission option.
+	 *
+	 * @param WPCF7_ContactForm $form
+	 * @param Submission_Option $option
+	 */
+	public static function store( WPCF7_ContactForm $form, Submission_Option $option ) {
 		$form_data = $option->form_data();
 
 		$returned_id = wp_insert_post( array(
@@ -114,10 +156,16 @@ final class Submission_Item {
 		$this->read_status = (int) get_post_meta( $this->id, '_ct_submission_read', true );
 	}
 
+	/**
+	 * Get the form post for this submission item.
+	 */
 	public function form(): ?WP_Post {
 		return $this->parent_id ? get_post( $this->parent_id ) : null;
 	}
 
+	/**
+	 * Get the author for this submission item.
+	 */
 	public function author(): ?WP_User {
 		if ( ! $this->author_id ) {
 			return null;
@@ -126,18 +174,30 @@ final class Submission_Item {
 		return get_userdata( $this->author_id ) ?: null;
 	}
 
+	/**
+	 * Mark this submission item as read.
+	 */
 	public function mark_read() {
 		return Submission_Item::set_read_status( $this->id, true );
 	}
 
+	/**
+	 * Mark this submission item as unread.
+	 */
 	public function mark_unread() {
 		return Submission_Item::set_read_status( $this->id, false );
 	}
 
+	/**
+	 * Check if this submission item is read.
+	 */
 	public function is_read(): bool {
 		return $this->read_status === 1;
 	}
 
+	/**
+	 * Check if this submission item is unread.
+	 */
 	public function is_unread(): bool {
 		return $this->read_status === 0;
 	}

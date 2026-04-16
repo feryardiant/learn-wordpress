@@ -16,7 +16,14 @@ function custom_theme_scripts() {
 
 add_action( 'phpmailer_init', 'custom_theme_mailer_init' );
 
+/**
+ * Configure PHPMailer for the custom theme.
+ */
 function custom_theme_mailer_init( WP_PHPMailer $mailer ) {
+	if ( ! function_exists( 'getenv_docker' ) ) {
+		return;
+	}
+
 	$mailer->Host = getenv_docker('SMTP_HOST', 'mail');
 	$mailer->Port = (int) getenv_docker('SMTP_PORT', 1025);
 	$mailer->Username = getenv_docker('SMTP_USER', '');
@@ -32,14 +39,23 @@ if ( defined( 'WPCF7_VERSION' ) ) {
 add_action( 'switch_theme', 'custom_theme_deactivation', 10, 0 );
 add_action( 'after_switch_theme', 'custom_theme_activation', 10, 0 );
 
+/**
+ * Trigger custom theme activation hook.
+ */
 function custom_theme_activation() {
 	do_action( 'ct_activation' );
 }
 
+/**
+ * Trigger custom theme deactivation hook.
+ */
 function custom_theme_deactivation() {
 	do_action( 'ct_deactivation' );
 }
 
+/**
+ * Override user contact meta properties.
+ */
 function custom_theme_user_contact_methods( $methods ) {
 	unset(
 		$methods['dribbble'],

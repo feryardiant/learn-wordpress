@@ -79,6 +79,12 @@ final class Submission_Option implements ArrayAccess {
 		'phone' => 'phone_field',
 	);
 
+	/**
+	 * Get all available options for the given $contact_form.
+	 *
+	 * @param WPCF7_ContactForm $contact_form
+	 * @return null|Submission_Option
+	 */
 	public static function get( WPCF7_ContactForm $contact_form ) {
 		$option = new self( $contact_form );
 		$submission = WPCF7_Submission::get_instance();
@@ -88,7 +94,7 @@ final class Submission_Option implements ArrayAccess {
 		}
 
 		foreach ( $contact_form->scan_form_tags() as $tag ) {
-			/** @var WPCF7_FormTag $tag */
+			/** @var \WPCF7_FormTag $tag */
 			if ( in_array( $tag->basetype, [ 'submit', 'button' ] ) ) {
 				continue;
 			}
@@ -120,12 +126,17 @@ final class Submission_Option implements ArrayAccess {
 		$boolean_keys = [ 'should_record', 'store_author' ];
 
 		foreach ( $properties as $key => $value ) {
-			$this->{$key} = in_array( $key, $boolean_keys )
+			$this->$key = in_array( $key, $boolean_keys )
 				? ! is_null( $value )
 				: $value;
 		}
 	}
 
+	/**
+	 * Get the form fields for the submission option form.
+	 *
+	 * @return array<string, array{label: string, description: string, type: string, atts: array, options: array}>
+	 */
 	public function fields() {
 		$mail_tags = $this->contact_form->collect_mail_tags();
 
@@ -193,28 +204,31 @@ final class Submission_Option implements ArrayAccess {
 		);
 	}
 
+	/**
+	 * Get the form data for the submission option form.
+	 *
+	 * @return array<string, mixed>
+	 */
 	public function form_data() {
 		return $this->form_data;
 	}
 
-	public function offsetExists( $offset ): bool {
-		return property_exists( $this, $offset );
-	}
-
 	#[\ReturnTypeWillChange]
 	public function offsetGet( $offset ) {
-		return $this->{$offset} ?? null;
+		return $this->$offset ?? null;
 	}
 
 	public function offsetSet( $offset, $value ): void {
-		if ( ! array_key_exists( $offset, $this->field_map ) ) {
-			return;
+		if ( array_key_exists( $offset, $this->field_map ) ) {
+			$this->$offset = $value;
 		}
-
-		$this->{$offset} = $value;
 	}
 
 	public function offsetUnset( $offset ): void {
 		// Doing nothing.
+	}
+
+	public function offsetExists( $offset ): bool {
+		return property_exists( $this, $offset );
 	}
 }

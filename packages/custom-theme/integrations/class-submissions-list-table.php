@@ -11,6 +11,12 @@ if ( ! class_exists( 'WP_List_Table' ) ) {
 }
 
 class Submissions_List_Table extends WP_List_Table {
+	/**
+	 * Define the columns for the submissions list table.
+	 *
+	 * @param array $columns
+	 * @return array
+	 */
 	public static function define_column( array $columns ) {
 		return wp_parse_args( $columns, array(
 			'cb' => '<input type="checkbox" />',
@@ -31,6 +37,9 @@ class Submissions_List_Table extends WP_List_Table {
 		) );
 	}
 
+	/**
+	 * Prepare the items for the submissions list table.
+	 */
 	public function prepare_items() {
 		$per_page = $this->get_items_per_page( 'ct_wpcf7_submissions_per_page' );
 
@@ -65,15 +74,17 @@ class Submissions_List_Table extends WP_List_Table {
 		}
 
 		$total_items = $q->found_posts;
-		$total_pages = ceil( $total_items / $per_page );
 
 		$this->set_pagination_args( array(
 			'total_items' => $total_items,
-			'total_pages' => $total_pages,
+			'total_pages' => ceil( $total_items / $per_page ),
 			'per_page' => $per_page,
 		) );
 	}
 
+	/**
+	 * {@inheritdoc}
+	 */
 	protected function get_sortable_columns() {
 		$columns = array(
 			'title' => array( 'title', true ),
@@ -84,24 +95,29 @@ class Submissions_List_Table extends WP_List_Table {
 		return $columns;
 	}
 
+	/**
+	 * {@inheritdoc}
+	 */
 	public function get_columns() {
 		return get_column_headers( get_current_screen() );
 	}
 
 	/**
+	 * {@inheritdoc}
+	 *
 	 * @param Submission_Item $item
 	 * @param string $column_name
-	 * @return string
 	 */
 	protected function column_default( $item, $column_name ) {
 		return '';
 	}
 
 	/**
+	 * {@inheritdoc}
+	 *
 	 * @param Submission_Item $item
 	 * @param string $column_name
 	 * @param string $primary
-	 * @return string
 	 */
 	protected function handle_row_actions( $item, $column_name, $primary ) {
 		if ( $column_name !== $primary ) {
@@ -138,8 +154,9 @@ class Submissions_List_Table extends WP_List_Table {
 	}
 
 	/**
+	 * {@inheritdoc}
+	 *
 	 * @param Submission_Item $item
-	 * @return string
 	 */
 	public function column_cb( $item ) {
 		return sprintf(
@@ -149,6 +166,11 @@ class Submissions_List_Table extends WP_List_Table {
 		);
 	}
 
+	/**
+	 * Configure the title column.
+	 *
+	 * @param Submission_Item $item
+	 */
 	public function column_title( Submission_Item $item ) {
 		$output = sprintf(
 			'<a class="%4$s" href="%1$s" aria-label="%2$s">%3$s</a>',
@@ -165,26 +187,37 @@ class Submissions_List_Table extends WP_List_Table {
 		return $output;
 	}
 
+	/**
+	 * Configure the author column.
+	 *
+	 * @param Submission_Item $item
+	 */
 	public function column_author( Submission_Item $item ) {
-		$author = $item->author();
-
-		if ( ! $author ) {
-			return '<span aria-hidden="true">—</span><span class="screen-reader-text">(no author)</span>';
+		if ( $author = $item->author() ) {
+			return esc_html( $author->display_name );
 		}
 
-		return esc_html( $author->display_name );
+		return '<span aria-hidden="true">—</span><span class="screen-reader-text">(no author)</span>';
 	}
 
+	/**
+	 * Configure the form column.
+	 *
+	 * @param Submission_Item $item
+	 */
 	public function column_form( Submission_Item $item ) {
-		$form = $item->form();
-
-		if ( ! $form ) {
-			return '<span aria-hidden="true">—</span><span class="screen-reader-text">(no form)</span>';
+		if ( $form = $item->form() ) {
+			return esc_html( $form->post_title );
 		}
 
-		return esc_html( $form->post_title );
+		return '<span aria-hidden="true">—</span><span class="screen-reader-text">(no form)</span>';
 	}
 
+	/**
+	 * Configure the date column.
+	 *
+	 * @param Submission_Item $item
+	 */
 	public function column_date( Submission_Item $item ) {
 		if ( ! $item->datetime ) {
 			return '';

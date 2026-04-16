@@ -43,12 +43,17 @@ add_action( 'init', static function() {
 
 add_action( 'wpcf7_before_send_mail', 'ct_wpcf7_before_send_mail' );
 
-add_action( 'wpcf7_save_contact_form', 'ct_wpcf7_save_contact_form', 10, 3 );
+add_action( 'wpcf7_save_contact_form', 'ct_wpcf7_save_contact_form', 10, 2 );
 
-add_filter( 'wpcf7_pre_construct_contact_form_properties', 'ct_wpcf7_pre_construct_contact_form_properties', 10, 2 );
+add_filter( 'wpcf7_pre_construct_contact_form_properties', 'ct_wpcf7_pre_construct_contact_form_properties', 10, 1 );
 
 add_filter( 'wpcf7_editor_panels', 'ct_wpcf7_editor_panels' );
 
+/**
+ * Capture the contact form submission and store it to database before sending it.
+ *
+ * @param WPCF7_ContactForm $contact_form
+ */
 function ct_wpcf7_before_send_mail( WPCF7_ContactForm $contact_form ) {
 	$option = Submission_Option::get( $contact_form );
 
@@ -56,24 +61,42 @@ function ct_wpcf7_before_send_mail( WPCF7_ContactForm $contact_form ) {
 
 	do_action( 'ct_wpcf7_before_save', $form_data );
 
-	$returned_id = Submission_Item::store( $option, $contact_form );
+	$returned_id = Submission_Item::store( $contact_form, $option );
 
 	do_action( 'ct_wpcf7_after_save', $form_data, $returned_id );
 }
 
-function ct_wpcf7_pre_construct_contact_form_properties( array $properties, WPCF7_ContactForm $contact_form ) {
+/**
+ * Register new contact form option properties.
+ *
+ * @param array<string, array<string, mixed>> $properties
+ * @return array<string, array<string, mixed>>
+ */
+function ct_wpcf7_pre_construct_contact_form_properties( array $properties ): array {
 	$properties['submissions'] = array();
 
 	return $properties;
 }
 
-function ct_wpcf7_save_contact_form( WPCF7_ContactForm $contact_form, array $data, string $context ) {
+/**
+ * Prepare to store option properties values.
+ *
+ * @param WPCF7_ContactForm $contact_form
+ * @param array<string, array<string, mixed>> $data
+ */
+function ct_wpcf7_save_contact_form( WPCF7_ContactForm $contact_form, array $data ): void {
 	$submissions = wp_parse_args( $data['ct-wpcf7-submissions'], array() );
 
 	$contact_form->set_properties( array( 'submissions' => $submissions ) );
 }
 
-function ct_wpcf7_editor_panels( array $panels ) {
+/**
+ * Add a submissions panel to the contact form editor.
+ *
+ * @param array<string, array{ title: string, callback: callable }> $panels
+ * @return array<string, array{ title: string, callback: callable }>
+ */
+function ct_wpcf7_editor_panels( array $panels ): array {
 	$post_type_object = get_post_type_object( 'form-submissions' );
 
 	$panels['submissions'] = array(
@@ -84,7 +107,12 @@ function ct_wpcf7_editor_panels( array $panels ) {
 	return $panels;
 }
 
-function ct_wpcf7_submissions_panel( WPCF7_ContactForm $contact_form ) {
+/**
+ * Render the submissions panel for the contact form editor.
+ *
+ * @param WPCF7_ContactForm $contact_form
+ */
+function ct_wpcf7_submissions_panel( WPCF7_ContactForm $contact_form ): void {
 	$formatter = new WPCF7_HTMLFormatter();
 	$post_type_object = get_post_type_object( 'form-submissions' );
 
@@ -218,7 +246,10 @@ function ct_wpcf7_submissions_panel( WPCF7_ContactForm $contact_form ) {
 	$formatter->print();
 }
 
-function ct_submissions_admin_menu() {
+/**
+ * Register the submissions admin menu.
+ */
+function ct_submissions_admin_menu(): void {
 	$post_type_object = get_post_type_object( 'form-submissions' );
 
 	$submissions = add_submenu_page( 'wpcf7',
@@ -237,7 +268,10 @@ function ct_submissions_admin_menu() {
 	);
 }
 
-function ct_submissions_load_page() {
+/**
+ * Load the submissions admin page.
+ */
+function ct_submissions_load_page(): void {
 	$action = wpcf7_superglobal_request( 'action', null );
 
 	do_action( 'ct_submissions_admin_page_load',
@@ -270,7 +304,10 @@ function ct_submissions_load_page() {
 	);
 }
 
-function ct_submissions_admin_management_page() {
+/**
+ * Load the submissions admin management page.
+ */
+function ct_submissions_admin_management_page(): void {
 	$list_table = new CT_WPCF7\Submissions_List_Table();
 	$post_type_object = get_post_type_object( 'form-submissions' );
 
@@ -311,7 +348,12 @@ function ct_submissions_admin_management_page() {
 	$formatter->print();
 }
 
-function ct_wpcf7_admin_url( array $query ) {
+/**
+ * Generate the admin URL for the submissions page.
+ *
+ * @param array $query
+ */
+function ct_wpcf7_admin_url( array $query ): string {
 	return add_query_arg(
 		$query,
 		menu_page_url( 'ct-wpcf7-submissions', false )
