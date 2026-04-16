@@ -310,11 +310,23 @@ function admin_management_page(): void {
 		'class' => 'wp-header-end',
 	) );
 
+	$formatter->append_start_tag( 'form', array(
+		'method' => 'get',
+	) );
+
+	$formatter->append_start_tag( 'input', array(
+		'type' => 'hidden',
+		'name' => 'page',
+		'value' => 'wpcf7-submissions',
+	) );
+
 	$formatter->call_user_func( static function () use ( $list_table, $post_type_object ) {
 		$list_table->search_box( $post_type_object->labels->search_items, 'wpcf7-submissions' );
 
 		$list_table->display();
 	} );
+
+	$formatter->end_tag( 'form' );
 
 	$formatter->end_tag( 'div' );
 
