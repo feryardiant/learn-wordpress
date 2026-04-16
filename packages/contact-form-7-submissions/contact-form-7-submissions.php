@@ -3,7 +3,7 @@
  * Plugin Name: Contact Form 7 Submissions
  * Plugin URI: https://feryardiant.id
  * Text Domain: wpcf7-submissions
- * Description: Save and manage Contact Form 7 submissions. Never lose important data. Contact Form 7 Submissions plugin is an add-on for the Contact Form 7 plugin.
+ * Description: Never lose a lead again. Save, manage, and convert every Contact Form 7 submission directly in your WordPress dashboard.
  * Author: Fery Wardiyanto
  * Version: 0.0.0
  * Author URI: https://feryardiant.id
