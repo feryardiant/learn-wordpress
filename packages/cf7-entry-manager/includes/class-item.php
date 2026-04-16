@@ -1,14 +1,13 @@
 <?php
 /**
- * @package feryardiant/contact-form-7-submissions
+ * @package feryardiant/wpcf7-entry-manager
  * @copyright Copyright (c) 2026 Fery Wardiyanto <https://feryardiant.id>
  * @license http://www.gnu.org/licenses/gpl-3.0.html GNU General Public License, version 3 or higher
  */
 
-namespace WPCF7S;
+namespace CF7_EntryManager;
 
 use DateTimeImmutable;
-use WP_Error;
 use WP_Post;
 use WP_User;
 use WPCF7_ContactForm;
@@ -57,7 +56,7 @@ final class Item {
 	 * @param bool $read
 	 */
 	public static function set_read_status( ?int $id, bool $read ): int|false {
-		return \update_post_meta( $id, '_wpcf7s_read_status', $read ? 1 : 0 );
+		return \update_post_meta( $id, '_wpcf7em_read_status', $read ? 1 : 0 );
 	}
 
 	/**
@@ -74,7 +73,7 @@ final class Item {
 			'post_status' => 'publish',
 			'post_title' => $option->subject ?? sprintf(
 				/* translators: %s: Contact form title */
-				__( 'Submission for "%s"', 'wpcf7-submissions' ),
+				__( 'Submission for "%s"', 'wpcf7-entry-manager' ),
 				$form->title()
 			),
 			'post_parent' => $form->id(),
@@ -88,7 +87,7 @@ final class Item {
 				\add_post_meta( $returned_id, $field, $value );
 			}
 
-			\add_post_meta( $returned_id, '_wpcf7s_read_status', 0 );
+			\add_post_meta( $returned_id, '_wpcf7em_read_status', 0 );
 		}
 
 		return $returned_id;
@@ -157,7 +156,7 @@ final class Item {
 		$this->author_id = $item?->post_author;
 		$this->message = $item?->post_excerpt;
 		$this->datetime = \get_post_datetime( $item?->ID ?? null ) ?: null;
-		$this->read_status = (int) \get_post_meta( $this->id, '_wpcf7s_read_status', true );
+		$this->read_status = (int) \get_post_meta( $this->id, '_wpcf7em_read_status', true );
 	}
 
 	/**

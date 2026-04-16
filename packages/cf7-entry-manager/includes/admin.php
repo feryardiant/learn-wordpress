@@ -1,11 +1,11 @@
 <?php
 /**
- * @package feryardiant/contact-form-7-submissions
+ * @package feryardiant/wpcf7-entry-manager
  * @copyright Copyright (c) 2026 Fery Wardiyanto <https://feryardiant.id>
  * @license http://www.gnu.org/licenses/gpl-3.0.html GNU General Public License, version 3 or higher
  */
 
-namespace WPCF7S;
+namespace CF7_EntryManager;
 
 use WPCF7_ContactForm;
 use WPCF7_HTMLFormatter;
@@ -22,7 +22,7 @@ use WPCF7_HTMLFormatter;
 			$post_type_object->labels->items_list,
 			$post_type_object->labels->menu_name,
 			'wpcf7_read_contact_forms',
-			'wpcf7-submissions',
+			'wpcf7-entry-manager',
 			__NAMESPACE__ . '\admin_management_page',
 			2,
 		);
@@ -50,11 +50,11 @@ use WPCF7_HTMLFormatter;
 
 		$form_data = $option->form_data();
 
-		\do_action( 'wpcf7s_before_save', $form_data );
+		\do_action( 'wpcf7em_before_save', $form_data );
 
 		$returned_id = Item::store( $contact_form, $option );
 
-		\do_action( 'wpcf7s_after_save', $form_data, $returned_id );
+		\do_action( 'wpcf7em_after_save', $form_data, $returned_id );
 	},
 	10, 1
 );
@@ -65,7 +65,7 @@ use WPCF7_HTMLFormatter;
 \add_action(
 	'wpcf7_save_contact_form',
 	static function ( WPCF7_ContactForm $contact_form, array $data ): void {
-		$submissions = \wp_parse_args( $data['wpcf7-submissions'], array() );
+		$submissions = \wp_parse_args( $data['wpcf7-entry-manager'], array() );
 
 		$contact_form->set_properties( array( 'submissions' => $submissions ) );
 	},
@@ -109,7 +109,7 @@ use WPCF7_HTMLFormatter;
 function admin_load_page(): void {
 	$action = \wpcf7_superglobal_request( 'action', null );
 
-	\do_action( 'wpcf7s_admin_page_load',
+	\do_action( 'wpcf7em_admin_page_load',
 		\wpcf7_superglobal_get( 'page' ),
 		$action
 	);
@@ -117,7 +117,7 @@ function admin_load_page(): void {
 	if ( 'read' === $action ) {
 		$id = (int) \wpcf7_superglobal_get( 'post' );
 
-		\check_admin_referer( 'wpcf7s-entry_' . $id );
+		\check_admin_referer( 'wpcf7em-entry_' . $id );
 
 		$query = array();
 
@@ -161,7 +161,7 @@ function admin_editor_panel( WPCF7_ContactForm $contact_form ): void {
 
 	$formatter->append_start_tag( 'legend' );
 
-	$description = __( 'You can edit the way you treat each submissions here.', 'wpcf7-submissions' );
+	$description = __( 'You can edit the way you treat each submissions here.', 'wpcf7-entry-manager' );
 
 	$formatter->append_preformatted( \esc_html( $description ) );
 
@@ -174,7 +174,7 @@ function admin_editor_panel( WPCF7_ContactForm $contact_form ): void {
 	$formatter->append_start_tag( 'tbody' );
 
 	$option = new Option( $contact_form );
-	$panel_id = 'wpcf7-submissions';
+	$panel_id = 'wpcf7-entry-manager';
 
 	foreach ( $option->fields() as $id => $field ) {
 		$field = \wp_parse_args( $field, array(
@@ -245,7 +245,7 @@ function admin_editor_panel( WPCF7_ContactForm $contact_form ): void {
 			) );
 
 			$formatter->append_preformatted(
-				\esc_html( __( 'None selected', 'wpcf7-submissions' ) )
+				\esc_html( __( 'None selected', 'wpcf7-entry-manager' ) )
 			);
 
 			foreach ( $field['options'] as $value => $label ) {
@@ -322,11 +322,11 @@ function admin_management_page(): void {
 	$formatter->append_start_tag( 'input', array(
 		'type' => 'hidden',
 		'name' => 'page',
-		'value' => 'wpcf7-submissions',
+		'value' => 'wpcf7-entry-manager',
 	) );
 
 	$formatter->call_user_func( static function () use ( $list_table, $post_type_object ) {
-		$list_table->search_box( $post_type_object->labels->search_items, 'wpcf7-submissions' );
+		$list_table->search_box( $post_type_object->labels->search_items, 'wpcf7-entry-manager' );
 
 		$list_table->display();
 	} );
@@ -344,6 +344,6 @@ function admin_management_page(): void {
 function admin_menu_url( array $query ): string {
 	return \add_query_arg(
 		$query,
-		\menu_page_url( 'wpcf7-submissions', false )
+		\menu_page_url( 'wpcf7-entry-manager', false )
 	);
 }

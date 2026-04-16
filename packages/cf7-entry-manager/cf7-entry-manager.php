@@ -1,8 +1,8 @@
 <?php
 /**
- * Plugin Name: Submissions Addon for Contact Form 7
+ * Plugin Name: Entry Manager for Contact Form 7
  * Plugin URI: https://feryardiant.id
- * Text Domain: wpcf7-submissions
+ * Text Domain: wpcf7-entry-manager
  * Description: Never lose a lead again. Save, manage, and convert every Contact Form 7 submission directly in your WordPress dashboard.
  * Author: Fery Wardiyanto
  * Version: 0.0.0
@@ -12,26 +12,26 @@
  * Requires PHP: 8.1
  * Requires Plugins: contact-form-7
  *
- * @package feryardiant/contact-form-7-submissions
+ * @package feryardiant/wpcf7-entry-manager
  * @copyright Copyright (c) 2026 Fery Wardiyanto <https://feryardiant.id>
  * @license http://www.gnu.org/licenses/gpl-3.0.html GNU General Public License, version 3 or higher
  */
 
-define( 'WPCF7S_VERSION', '0.0.0' );
-define( 'WPCF7S__MINIMUM_WP_VERSION', '6.8' );
-define( 'WPCF7S__MINIMUM_PHP_VERSION', '8.1' );
+define( 'CF7EM_VERSION', '0.0.0' );
+define( 'CF7EM__MINIMUM_WP_VERSION', '6.8' );
+define( 'CF7EM__MINIMUM_PHP_VERSION', '8.1' );
 
 /**
- * Check if the version of WordPress in use on the site is supported by Submissions Addon for Contact Form 7.
+ * Check if the version of WordPress in use on the site is supported by Entry Manager for Contact Form 7.
  */
-if ( version_compare( $GLOBALS['wp_version'], WPCF7S__MINIMUM_WP_VERSION, '<' ) ) {
+if ( version_compare( $GLOBALS['wp_version'], CF7EM__MINIMUM_WP_VERSION, '<' ) ) {
 	if ( defined( 'WP_DEBUG' ) && WP_DEBUG ) {
 		error_log( // phpcs:ignore WordPress.PHP.DevelopmentFunctions.error_log_error_log
 			sprintf(
 				/* translators: Placeholders are numbers, versions of WordPress in use on the site, and required by WordPress. */
-				esc_html__( 'Your version of WordPress (%1$s) is lower than the version required by Submissions Addon for Contact Form 7 (%2$s). Please update WordPress to continue enjoying Submissions Addon for Contact Form 7.', 'wpcf7-submissions' ),
+				esc_html__( 'Your version of WordPress (%1$s) is lower than the version required by Entry Manager for Contact Form 7 (%2$s). Please update WordPress to continue enjoying Entry Manager for Contact Form 7.', 'wpcf7-entry-manager' ),
 				$GLOBALS['wp_version'],
-				WPCF7S__MINIMUM_WP_VERSION
+				CF7EM__MINIMUM_WP_VERSION
 			)
 		);
 	}
@@ -39,7 +39,7 @@ if ( version_compare( $GLOBALS['wp_version'], WPCF7S__MINIMUM_WP_VERSION, '<' ) 
 	add_action( 'admin_notices', static function () {
 		?>
 		<div class="notice notice-error is-dismissible">
-			<p><?php esc_html_e( 'Submissions Addon for Contact Form 7 requires a more recent version of WordPress and has been paused. Please update WordPress to continue enjoying Submissions Addon for Contact Form 7.', 'wpcf7-submissions' ); ?></p>
+			<p><?php esc_html_e( 'Entry Manager for Contact Form 7 requires a more recent version of WordPress and has been paused. Please update WordPress to continue enjoying Entry Manager for Contact Form 7.', 'wpcf7-entry-manager' ); ?></p>
 		</div>
 		<?php
 	} );
@@ -67,15 +67,15 @@ add_action( 'init', static function() {
 	$post_type = 'form-submissions';
 
 	$labels = array(
-		'name' => __( 'Submissions', 'wpcf7-submissions' ),
-		'singular_name' => __( 'Submission', 'wpcf7-submissions' ),
-		'view_item' => __( 'View Submission', 'wpcf7-submissions' ),
-		'search_items' => __( 'Search Submissions', 'wpcf7-submissions' ),
-		'not_found' => __( 'No submissions found.', 'wpcf7-submissions' ),
-		'not_found_in_trash' => __( 'No submissions found in Trash.', 'wpcf7-submissions' ),
-		'filter_items_list' => _x( 'Filter submissions list', 'Screen reader text for the filter links heading on the post type listing screen.', 'wpcf7-submissions' ),
-		'items_list_navigation' => _x( 'Submissions list navigation', 'Screen reader text for the pagination heading on the post type listing screen.', 'wpcf7-submissions' ),
-		'items_list' => _x( 'Submissions list', 'Screen reader text for the items list heading on the post type listing screen.', 'wpcf7-submissions' ),
+		'name' => __( 'Submissions', 'wpcf7-entry-manager' ),
+		'singular_name' => __( 'Submission', 'wpcf7-entry-manager' ),
+		'view_item' => __( 'View Submission', 'wpcf7-entry-manager' ),
+		'search_items' => __( 'Search Submissions', 'wpcf7-entry-manager' ),
+		'not_found' => __( 'No submissions found.', 'wpcf7-entry-manager' ),
+		'not_found_in_trash' => __( 'No submissions found in Trash.', 'wpcf7-entry-manager' ),
+		'filter_items_list' => _x( 'Filter submissions list', 'Screen reader text for the filter links heading on the post type listing screen.', 'wpcf7-entry-manager' ),
+		'items_list_navigation' => _x( 'Submissions list navigation', 'Screen reader text for the pagination heading on the post type listing screen.', 'wpcf7-entry-manager' ),
+		'items_list' => _x( 'Submissions list', 'Screen reader text for the items list heading on the post type listing screen.', 'wpcf7-entry-manager' ),
 	);
 
 	register_post_type( $post_type, array(
@@ -102,7 +102,7 @@ add_action( 'init', static function() {
 	add_filter(
 		'user_contactmethods',
 		static fn ( array $methods ) => array_merge( array(
-			'user_phone' => __( 'Phone Number', 'wpcf7-submissions' )
+			'user_phone' => __( 'Phone Number', 'wpcf7-entry-manager' )
 		), $methods ),
 		10, 1
 	);

@@ -1,6 +1,6 @@
-=== Submissions Addon for Contact Form 7 ===
-Contributors: feryardiant
-Tags: contact form 7, cf7 submissions, leads capture, form storage, contact form
+=== Entry Manager for Contact Form 7 ===
+Contributors: ferywardiyanto
+Tags: contact form 7, cf7 entry manager, leads capture, form storage, contact form submissions
 Donate link: https://github.com/sponsors/feryardiant
 Requires at least: 6.8
 Tested up to: 6.8
@@ -13,7 +13,7 @@ Never lose a lead again. Save, manage, and convert every Contact Form 7 submissi
 
 == Description ==
 
-Stop relying on unreliable email notifications. **Submissions Addon for Contact Form 7** acts as your ultimate safety net, capturing every single submission and storing it securely in your WordPress database.
+Stop relying on unreliable email notifications. **Entry Manager for Contact Form 7** acts as your ultimate safety net, capturing every single submission and storing it securely in your WordPress database.
 
 Whether it's a server error, a spam filter, or a full inbox, you can rest easy knowing your data is safe and accessible right from your dashboard.
 

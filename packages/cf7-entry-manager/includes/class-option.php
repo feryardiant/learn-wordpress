@@ -1,11 +1,11 @@
 <?php
 /**
- * @package feryardiant/contact-form-7-submissions
+ * @package feryardiant/wpcf7-entry-manager
  * @copyright Copyright (c) 2026 Fery Wardiyanto <https://feryardiant.id>
  * @license http://www.gnu.org/licenses/gpl-3.0.html GNU General Public License, version 3 or higher
  */
 
-namespace WPCF7S;
+namespace CF7_EntryManager;
 
 use ArrayAccess;
 use WPCF7_ContactForm;
@@ -144,25 +144,25 @@ final class Option implements ArrayAccess {
 
 		return array(
 			'should_record' => array(
-				'label' => \esc_html( __( 'Record', 'wpcf7-submissions' ) ),
+				'label' => \esc_html( __( 'Record', 'wpcf7-entry-manager' ) ),
 				'description' => \esc_html(
-					__( 'Whether to record the submissions to the database', 'wpcf7-submissions' )
+					__( 'Whether to record the submissions to the database', 'wpcf7-entry-manager' )
 				),
 				'atts' => array( 'type' => 'checkbox' ),
 			),
 			'subject_field' => array(
-				'label' => \esc_html( __( 'Subject', 'wpcf7-submissions' ) ),
+				'label' => \esc_html( __( 'Subject', 'wpcf7-entry-manager' ) ),
 				'description' => \esc_html(
-					__( 'Choose which field is identified as a submission subject', 'wpcf7-submissions' )
+					__( 'Choose which field is identified as a submission subject', 'wpcf7-entry-manager' )
 				),
 				'type' => 'select',
 				'atts' => array( 'class' => 'large-text code' ),
 				'options' => $mail_tags,
 			),
 			'message_field' => array(
-				'label' => \esc_html( __( 'Message', 'wpcf7-submissions' ) ),
+				'label' => \esc_html( __( 'Message', 'wpcf7-entry-manager' ) ),
 				'description' => \esc_html(
-					__( 'Choose which field is identified as a submission message', 'wpcf7-submissions' )
+					__( 'Choose which field is identified as a submission message', 'wpcf7-entry-manager' )
 				),
 				'type' => 'select',
 				'atts' => array( 'class' => 'large-text code' ),
@@ -170,34 +170,34 @@ final class Option implements ArrayAccess {
 			),
 			'sep-1' => array( 'type' => 'separator' ),
 			'store_author' => array(
-				'label' => \esc_html( __( 'Author', 'wpcf7-submissions' ) ),
+				'label' => \esc_html( __( 'Author', 'wpcf7-entry-manager' ) ),
 				'description' => \esc_html(
-					__( 'Whether the submission author will be registered as subscriber', 'wpcf7-submissions' )
+					__( 'Whether the submission author will be registered as subscriber', 'wpcf7-entry-manager' )
 				),
 				'atts' => array( 'type' => 'checkbox' ),
 			),
 			'name_field' => array(
-				'label' => \esc_html( __( 'Author Name', 'wpcf7-submissions' ) ),
+				'label' => \esc_html( __( 'Author Name', 'wpcf7-entry-manager' ) ),
 				'description' => \esc_html(
-					__( 'Choose which field is identified as the submitter\'s name', 'wpcf7-submissions' )
+					__( 'Choose which field is identified as the submitter\'s name', 'wpcf7-entry-manager' )
 				),
 				'type' => 'select',
 				'atts' => array( 'class' => 'large-text code' ),
 				'options' => $mail_tags,
 			),
 			'email_field' => array(
-				'label' => \esc_html( __( 'Author Email', 'wpcf7-submissions' ) ),
+				'label' => \esc_html( __( 'Author Email', 'wpcf7-entry-manager' ) ),
 				'description' => \esc_html(
-					__( 'Choose which field is identified as the submitter\'s email', 'wpcf7-submissions' )
+					__( 'Choose which field is identified as the submitter\'s email', 'wpcf7-entry-manager' )
 				),
 				'type' => 'select',
 				'atts' => array( 'class' => 'large-text code' ),
 				'options' => $mail_tags,
 			),
 			'phone_field' => array(
-				'label' => \esc_html( __( 'Author Phone', 'wpcf7-submissions' ) ),
+				'label' => \esc_html( __( 'Author Phone', 'wpcf7-entry-manager' ) ),
 				'description' => \esc_html(
-					__( 'Choose which field is identified as the submitter\'s phone number', 'wpcf7-submissions' )
+					__( 'Choose which field is identified as the submitter\'s phone number', 'wpcf7-entry-manager' )
 				),
 				'type' => 'select',
 				'atts' => array( 'class' => 'large-text code' ),

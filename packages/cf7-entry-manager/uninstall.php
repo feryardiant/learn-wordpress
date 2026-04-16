@@ -1,10 +1,10 @@
 <?php
 /**
- * Submissions Addon for Contact Form 7 Uninstaller
+ * Entry Manager for Contact Form 7 Uninstaller
  *
- * Uninstalling Submissions Addon for Contact Form 7 deletes submissions and options.
+ * Uninstalling Entry Manager for Contact Form 7 deletes submissions and options.
  *
- * @package feryardiant/contact-form-7-submissions
+ * @package feryardiant/wpcf7-entry-manager
  * @copyright Copyright (c) 2026 Fery Wardiyanto <https://feryardiant.id>
  * @license http://www.gnu.org/licenses/gpl-3.0.html GNU General Public License, version 3 or higher
  */
