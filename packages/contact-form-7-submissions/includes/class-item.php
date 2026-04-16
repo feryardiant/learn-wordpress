@@ -100,7 +100,7 @@ final class Item {
 		if ( \email_exists( $option->email ) ) {
 			$user = WP_User::get_data_by( 'email', $option->email );
 
-			\add_user_meta( $user->ID, 'user_phone', $option->phone ?? '' );
+			\update_user_meta( $user->ID, 'user_phone', $option->phone ?? '' );
 
 			return (int) $user->ID;
 		}
@@ -112,7 +112,7 @@ final class Item {
 		if ( \username_exists( $login ) ) {
 			$user = WP_User::get_data_by( 'login', $login );
 
-			\add_user_meta( $user->ID, 'user_phone', $option->phone ?? '' );
+			\update_user_meta( $user->ID, 'user_phone', $option->phone ?? '' );
 
 			return (int) $user->ID;
 		}
@@ -137,7 +137,7 @@ final class Item {
 			return 0;
 		}
 
-		\add_user_meta( $user_id, 'user_phone', $option->phone ?? '' );
+		\update_user_meta( $user_id, 'user_phone', $option->phone ?? '' );
 
 		return (int) $user_id;
 	}
