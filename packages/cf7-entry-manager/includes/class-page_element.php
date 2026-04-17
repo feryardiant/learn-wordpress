@@ -189,7 +189,7 @@ final class Page_Element {
 
 		if ( ! is_array( $atts ) ) {
 			throw new \TypeError( sprintf(
-				'%s::$s(): Argument #1 ($atts) must be of type array, %s given',
+				'%s::%s(): Argument #1 ($atts) must be of type array, %s given',
 				__CLASS__, $method, gettype( $atts )
 			) );
 		}
@@ -219,7 +219,7 @@ final class Page_Element {
 				$this->within_element = false;
 			} else {
 				throw new \TypeError( sprintf(
-					'%s::$s(): Argument #2 ($child) must be of type callable|string, %s given',
+					'%s::%s(): Argument #2 ($child) must be of type callable|string, %s given',
 					__CLASS__, $method, gettype( $child )
 				) );
 			}
