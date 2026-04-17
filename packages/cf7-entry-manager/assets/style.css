@@ -83,7 +83,8 @@
             font-weight: 600;
         }
 
-        &.wpcf7em-no-value {
+        &.wpcf7em-no-value,
+        .wpcf7em-no-value {
             font-style: italic;
             color: var(--secondary-text-color);
         }
