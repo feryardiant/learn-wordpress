@@ -4,7 +4,7 @@ This file serves as a persistent context for AI agents working in this project. 
 
 ## 🏗 Project Identity
 
-A Dockerized WordPress local development environment using Apache, MySQL 8.0, and automated initialization via WP-CLI.
+A Dockerized WordPress local development environment using Apache, MySQL 8.0, and automated initialization via WP-CLI. Includes specialized evaluation tools like **Entry Manager for Contact Form 7**.
 
 ## 🛠 Operational Mandates
 
@@ -23,6 +23,6 @@ A Dockerized WordPress local development environment using Apache, MySQL 8.0, an
 
 ## 📝 Persistent Memory (Context)
 
-- **Date**: 2026-04-11
-- **Status**: Environment is fully documented with automated WordPress installation, custom theme support, and persistent agent guidelines. Metadata is managed via the `.gemini/` directory.
+- **Date**: 2026-04-18
+- **Status**: Environment is fully documented with automated WordPress installation, custom theme support, and the Entry Manager for Contact Form 7 plugin for lead evaluation. Metadata is managed via the `.gemini/` directory.
 - **Next Steps**: (Add future project goals here as needed).

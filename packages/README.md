@@ -19,4 +19,7 @@ To ensure the local development environment remains organized and functional, al
 ## 📁 Current Packages
 
 ### Themes
-- **custom-theme**: A starter theme for local development. Includes automated PHP Mailer configuration to route WordPress emails to the project's Mailpit service.
+- **custom-theme**: A starter theme for local development.
+
+### Plugins
+- **cf7-entry-manager**: Entry Manager for Contact Form 7. Captures every submission and stores it securely in the database. Includes automated PHP Mailer configuration to route WordPress emails to the project's Mailpit service.

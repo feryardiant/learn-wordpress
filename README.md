@@ -53,12 +53,12 @@ This environment supports automated conversion to a **WordPress Multisite Networ
 All outgoing emails are automatically captured for testing using **Mailpit**.
 
 - **Dashboard**: [http://localhost:8025](http://localhost:8025) (or your configured `FORWARD_MAILPIT_PORT`).
-- **How it works**: The `custom-theme` contains an automated PHP Mailer configuration (`phpmailer_init` hook) that routes all emails to the internal `mail` service container on port 1025.
+- **How it works**: The `cf7-entry-manager` plugin contains an automated PHP Mailer configuration (`phpmailer_init` hook) that routes all emails to the internal `mail` service container on port 1025.
 
 ## 🔌 Evaluating Themes & Plugins
 
 - **Official Market (Repo)**: Add the slugs to `SITE_PLUGINS` or `SITE_THEMES` in your `.env` and restart the containers.
-- **Custom / Local**: Place your theme or plugin folder in the `packages/` directory.
+- **Custom / Local**: Place your theme or plugin folder in the `packages/` directory (e.g., `packages/cf7-entry-manager`).
 
 ## 🛠 Lifecycle Commands
 
@@ -70,7 +70,7 @@ All outgoing emails are automatically captured for testing using **Mailpit**.
 ## 📁 Project Structure
 
 - `docker/init-wp.sh`: The "Zero-Config" engine—automatically handles installation, options, and branding.
-- `packages/`: Local themes and plugins (currently includes `custom-theme`).
+- `packages/`: Local themes and plugins (includes `custom-theme` and `cf7-entry-manager`).
 - `public/`: Static assets (favicon) and server configurations (.htaccess).
 - `volumes/`: Persisted data for WordPress files, MySQL, and Mailpit.
 - `compose.yaml`: Docker services orchestration.
