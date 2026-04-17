@@ -40,6 +40,12 @@ Unlike basic storage plugins, this plugin allows you to map submissions to WordP
 3. Edit your Contact Form 7 form and look for the new "Submissions" tab.
 4. Enable "Record" and map your fields.
 
+== Screenshots ==
+
+1. **Capture Settings**: Map form tags to submission properties and enable lead storage for each Contact Form 7 form.
+2. **Submissions Dashboard**: A centralized hub to manage all captured leads with read/unread status and smart author integration.
+3. **Detailed Entry View**: Inspect full submission data, metadata, and mapped author information in a clean, organized layout.
+
 == Frequently Asked Questions ==
 
 = Does this work with any CF7 form? =
