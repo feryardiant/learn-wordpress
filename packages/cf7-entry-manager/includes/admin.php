@@ -8,7 +8,6 @@
 namespace CF7_EntryManager;
 
 use WPCF7_ContactForm;
-use WPCF7_HTMLFormatter;
 
 /**
  * Register the submissions admin menu.
@@ -146,138 +145,107 @@ function admin_load_page(): void {
  * @internal
  */
 function admin_editor_panel( WPCF7_ContactForm $contact_form ): void {
-	$formatter = new WPCF7_HTMLFormatter();
 	$post_type_object = \get_post_type_object( 'form-submissions' );
-
-	$formatter->append_start_tag( 'h2' );
-
-	$formatter->append_preformatted(
-		\esc_html( $post_type_object->label )
-	);
-
-	$formatter->end_tag( 'h2' );
-
-	$formatter->append_start_tag( 'fieldset' );
-
-	$formatter->append_start_tag( 'legend' );
-
-	$description = __( 'You can edit the way you treat each submissions here.', 'wpcf7-entry-manager' );
-
-	$formatter->append_preformatted( \esc_html( $description ) );
-
-	$formatter->end_tag( 'legend' );
-
-	$formatter->append_start_tag( 'table', array(
-		'class' => 'form-table',
+	$element = new Page_Element( array(
+		'allowed_html' => array(
+			'form' => array( 'method' => true ),
+		),
 	) );
 
-	$formatter->append_start_tag( 'tbody' );
+	$element->h2( array(), \esc_html( $post_type_object->label ) );
 
-	$option = new Option( $contact_form );
-	$panel_id = 'wpcf7-entry-manager';
+	$element->fieldset( array(), static fn ( $element ) => $element
+		->legend( array(), \esc_html(
+			__( 'You can edit the way you treat each submissions here.', 'wpcf7-entry-manager' )
+		) )
 
-	foreach ( $option->fields() as $id => $field ) {
-		$field = \wp_parse_args( $field, array(
-			'label' => '',
-			'description' => '',
-			'type' => 'input',
-			'atts' => array(),
-			'options' => array(),
-		) );
+		->table( array( 'class' => 'form-table' ), static fn ( $element ) => $element
+			->tbody( array(), static function ( $element ) use ( $contact_form ) {
+				$option = new Option( $contact_form );
+				$panel_id = 'wpcf7-entry-manager';
 
-		$formatter->append_start_tag( 'tr' );
+				foreach ( $option->fields() as $id => $field ) {
+					$field = \wp_parse_args( $field, array(
+						'label' => '',
+						'description' => '',
+						'type' => 'input',
+						'atts' => array(),
+						'options' => array(),
+					) );
 
-		if ( $field['type'] === 'separator' ) {
-			$formatter->append_start_tag( 'td', array(
-				'colspan' => '2',
-				'style' => 'padding: 0;',
-			) );
+					if ( $field['type'] === 'separator' ) {
+						$element->td( array( 'colspan' => '2', 'style' => 'padding: 0;' ),
+							static fn ( $element ) => $element->hr()
+						);
 
-			$formatter->append_start_tag( 'hr' );
+						continue;
+					}
 
-			continue;
-		}
+					$field_id = sprintf( '%s-%s', $panel_id, $id );
 
-		$formatter->append_start_tag( 'th', array(
-			'scope' => 'row',
-		) );
+					$element->tr( array(), static fn ( $element ) => $element
+						->th( array( 'scope' => 'row' ),
+							static fn ( $element ) => $element
+								->label( array( 'for' => $field_id ), $field['label'] )
+						)
 
-		$field_id = sprintf( '%s-%s', $panel_id, $id );
-		$field_atts = \wp_parse_args( $field['atts'], array(
-			'id' => $field_id,
-			'name' => sprintf( '%s[%s]', $panel_id, $id ),
-			'value' => $option[$id],
-		) );
+						->td( array(), static function ( $element ) use ( $option, $id, $panel_id, $field, $field_id ) {
+							$field_atts = \wp_parse_args( $field['atts'], array(
+								'id' => $field_id,
+								'name' => sprintf( '%s[%s]', $panel_id, $id ),
+								'value' => $option[$id],
+							) );
 
-		$formatter->append_start_tag( 'label', array(
-			'for' => $field_id,
-		) );
+							$is_select = $field['type'] === 'select';
+							$is_checkbox = $field['type'] === 'input' && $field_atts['type'] === 'checkbox';
 
-		$formatter->append_preformatted( $field['label'] );
+							$selected = null;
 
-		$formatter->append_start_tag( 'td' );
+							if ( $is_select ) {
+								$selected = $field_atts['value'];
+								unset( $field_atts['value'] );
+							}
 
-		$is_select = $field['type'] === 'select';
-		$is_checkbox = $field['type'] === 'input' && $field_atts['type'] === 'checkbox';
+							if ( $is_checkbox ) {
+								$element->label( array( 'for' => $field_id ) );
 
-		$selected = null;
+								$field_atts['value'] = 'on';
+								$field_atts['checked'] = $option[$id];
+							}
 
-		if ( $is_select ) {
-			$selected = $field_atts['value'];
-			unset( $field_atts['value'] );
-		}
+							$element->{$field['type']}( $field_atts, static function ( Page_Element $element ) use ( $field, $selected ) {
+								if ( $field['type'] !== 'select' || ! is_array( $field['options'] ?? null ) ) {
+									return;
+								}
 
-		if ( $is_checkbox ) {
-			$formatter->append_start_tag( 'label', array(
-				'for' => $field_id,
-			) );
+								$element->option( array( 'selected' => is_null( $selected ), 'value' => '' ),
+									\esc_html( __( 'None selected', 'wpcf7-entry-manager' ) )
+								);
 
-			$field_atts['value'] = 'on';
-			$field_atts['checked'] = $option[$id];
-		}
+								foreach ( $field['options'] as $value => $label ) {
+									$value = is_int( $value ) ? $label : $value;
 
-		$formatter->append_start_tag( $field['type'], $field_atts );
+									$element->option( array( 'value' => \esc_attr( $value ), 'selected' => $selected === $value ),
+										\esc_html( $label )
+									);
+								}
+							} );
 
-		if ( $field['type'] === 'select' && is_array( $field['options'] ?? null ) ) {
-			$formatter->append_start_tag( 'option', array(
-				'selected' => is_null( $selected ),
-				'value' => '',
-			) );
+							if ( ! empty( $field['description'] ) ) {
+								if ( $is_checkbox ) {
+									$element->span( array(), esc_html( $field['description'] ) );
+								} else {
+									$element->p( array( 'class' => 'description' ), esc_html( $field['description'] ) );
+								}
+							}
+						} )
+					);
+				}
+			} )
+		)
+	);
 
-			$formatter->append_preformatted(
-				\esc_html( __( 'None selected', 'wpcf7-entry-manager' ) )
-			);
-
-			foreach ( $field['options'] as $value => $label ) {
-				$value = is_int( $value ) ? $label : $value;
-
-				$formatter->append_start_tag( 'option', array(
-					'value' => \esc_attr( $value ),
-					'selected' => $selected === $value,
-				) );
-
-				$formatter->append_preformatted( \esc_html( $label ) );
-			}
-
-			$formatter->end_tag( $field['type'] );
-		}
-
-		if ( ! $is_checkbox ) {
-			$formatter->append_start_tag( 'p', array(
-				'class' => 'description',
-			) );
-		}
-
-		if ( ! empty( $field['description'] ) ) {
-			$formatter->append_preformatted( \esc_html( $field['description'] ) );
-		}
-	}
-
-	$formatter->end_tag( 'tbody' );
-
-	$formatter->end_tag( 'table' );
-
-	$formatter->print();
+	$element->render();
 }
 
 /**
@@ -300,51 +268,41 @@ function admin_management_page(): void {
 
 	$list_table->prepare_items();
 
-	$formatter = new WPCF7_HTMLFormatter( array(
-		'allowed_html' => array_merge( \wpcf7_kses_allowed_html(), array(
+	$element = new Page_Element( array(
+		'allowed_html' => array(
 			'form' => array( 'method' => true ),
-		) ),
+		),
 	) );
 
-	$formatter->append_start_tag( 'div', array(
-		'class' => 'wrap',
-	) );
+	$element->div(
+		array( 'class' => 'wrap' ),
+		static fn ( $element ) => $element
+			->h1( array( 'class' => 'wp-heading-inline' ),
+				\esc_html( $post_type_object->labels->items_list )
+			)
 
-	$formatter->append_start_tag( 'h1', array(
-		'class' => 'wp-heading-inline',
-	) );
+			->hr( array( 'class' => 'wp-header-end' ) )
 
-	$formatter->append_preformatted(
-		\esc_html( $post_type_object->labels->items_list )
+			->form( array( 'method' => 'get' ),
+				static fn ( $element ) => $element
+					->input( array(
+						'type' => 'hidden',
+						'name' => 'page',
+						'value' => 'wpcf7-entry-manager',
+					) )
+
+					->call( static function () use ( $list_table, $post_type_object ) {
+						$list_table->search_box(
+							$post_type_object->labels->search_items,
+							'wpcf7-entry-manager'
+						);
+
+						$list_table->display();
+					} )
+			)
 	);
 
-	$formatter->end_tag( 'h1' );
-
-	$formatter->append_start_tag( 'hr', array(
-		'class' => 'wp-header-end',
-	) );
-
-	$formatter->append_start_tag( 'form', array(
-		'method' => 'get',
-	) );
-
-	$formatter->append_start_tag( 'input', array(
-		'type' => 'hidden',
-		'name' => 'page',
-		'value' => 'wpcf7-entry-manager',
-	) );
-
-	$formatter->call_user_func( static function () use ( $list_table, $post_type_object ) {
-		$list_table->search_box( $post_type_object->labels->search_items, 'wpcf7-entry-manager' );
-
-		$list_table->display();
-	} );
-
-	$formatter->end_tag( 'form' );
-
-	$formatter->end_tag( 'div' );
-
-	$formatter->print();
+	$element->render();
 }
 
 /**
