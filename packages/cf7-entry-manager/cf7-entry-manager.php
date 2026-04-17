@@ -122,7 +122,7 @@ add_action( 'init', static function() {
 		'labels' => $labels,
 		'description' => 'List of form submissions.',
 		'public' => false,
-		'show_ui' => true,
+		'show_ui' => false,
 		'show_in_nav_menus' => false,
 		'show_in_admin_bar' => false,
 		'capability_type' => 'post',
