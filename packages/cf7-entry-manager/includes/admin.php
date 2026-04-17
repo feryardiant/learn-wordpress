@@ -154,13 +154,13 @@ function admin_editor_panel( WPCF7_ContactForm $contact_form ): void {
 
 	$element->h2( array(), \esc_html( $post_type_object->label ) );
 
-	$element->fieldset( array(), static fn ( $element ) => $element
+	$element->fieldset( child: static fn ( $element ) => $element
 		->legend( array(), \esc_html(
 			__( 'You can edit the way you treat each submissions here.', 'wpcf7-entry-manager' )
 		) )
 
 		->table( array( 'class' => 'form-table' ), static fn ( $element ) => $element
-			->tbody( array(), static function ( $element ) use ( $contact_form ) {
+			->tbody( child: static function ( $element ) use ( $contact_form ) {
 				$option = new Option( $contact_form );
 				$panel_id = 'wpcf7-entry-manager';
 
@@ -183,13 +183,13 @@ function admin_editor_panel( WPCF7_ContactForm $contact_form ): void {
 
 					$field_id = sprintf( '%s-%s', $panel_id, $id );
 
-					$element->tr( array(), static fn ( $element ) => $element
+					$element->tr( child: static fn ( $element ) => $element
 						->th( array( 'scope' => 'row' ),
 							static fn ( $element ) => $element
 								->label( array( 'for' => $field_id ), $field['label'] )
 						)
 
-						->td( array(), static function ( $element ) use ( $option, $id, $panel_id, $field, $field_id ) {
+						->td( child: static function ( $element ) use ( $option, $id, $panel_id, $field, $field_id ) {
 							$field_atts = \wp_parse_args( $field['atts'], array(
 								'id' => $field_id,
 								'name' => sprintf( '%s[%s]', $panel_id, $id ),

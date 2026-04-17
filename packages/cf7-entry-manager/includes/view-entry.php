@@ -41,8 +41,7 @@ $element->div( array(
 		);
 	}, $item )
 
-	->h1(
-		array( 'class' => 'wp-heading-inline' ),
+	->h1( array( 'class' => 'wp-heading-inline' ),
 		esc_html( __( 'View Form Submission', 'wpcf7-entry-manager' ) )
 	)
 
@@ -54,29 +53,25 @@ $element->div( array(
 		'id' => 'wpcf7-admin-form-element',
 		'disabled' => ! $item->current_user_can( 'wpcf7_edit_contact_form' ),
 	), static fn ( $element ) => $element
-		->call_when(
-			$item->current_user_can( 'wpcf7_edit_contact_form' ),
+		->call_when( $item->current_user_can( 'wpcf7_edit_contact_form' ),
 			static function () use ( $item ) {
 				wp_nonce_field( 'wpcf7-save-submission-entry_' . $item->id );
 			}
 		)
+
 		->input( array( 'type' => 'hidden', 'id' => 'post_ID', 'name' => 'post_ID', 'value' => $item->id ) )
+
 		->input( array( 'type' => 'hidden', 'id' => 'hiddenaction', 'name' => 'action', 'value' => 'save' ) )
-		->div(
-			array( 'id' => 'poststuff', ),
+
+		->div( array( 'id' => 'poststuff', ),
 			static fn ( $element ) => $element
-				->div( array(
-					'id' => 'post-body',
-					'class' => 'metabox-holder columns-2 wp-clearfix',
-				), static fn ( $element ) => $element
-					->div(
-						array( 'id' => 'post-body-content'),
+				->div( array( 'id' => 'post-body', 'class' => 'metabox-holder columns-2 wp-clearfix' ),
+					static fn ( $element ) => $element
+					->div( array( 'id' => 'post-body-content'),
 						static fn ( $element ) => $element
-						->div(
-							array( 'id' => 'titlediv'),
+						->div( array( 'id' => 'titlediv'),
 							static fn ( $element ) => $element
-							->div(
-								array( 'id' => 'titlewrap'),
+							->div( array( 'id' => 'titlewrap'),
 								static fn ( $element ) => $element
 								->input( array(
 									'type' => 'text',
@@ -93,134 +88,102 @@ $element->div( array(
 						) // #titlediv
 					) // #post-body-content
 
-					->div( array(
-						'id' => 'postbox-container-1',
-						'class' => 'postbox-container',
-					), static fn ( $element ) => $element
-						->section(
-							array( 'id' => 'submitdiv', 'class' => 'postbox' ),
+					->div( array( 'id' => 'postbox-container-1', 'class' => 'postbox-container' ),
+						static fn ( $element ) => $element
+						->section( array( 'id' => 'submitdiv', 'class' => 'postbox' ),
 							static fn ( $element ) => $element
-								->div(
-									array( 'class' => 'postbox-header' ),
-									static fn ( $element ) => $element
-										->h2(
-											array(),
-											esc_html( __( 'Status', 'wpcf7-entry-manager' ) ),
-										)
-										->div(
-											array( 'class' => 'handle-actions hide-if-no-js' ),
-											static fn ( $element ) => $element
-												// Nothing for now
-										), // .handle-actions
-								) // .postbox-header
-
-								->div(
-									array( 'class' => 'inside' ),
-									static fn ( $element ) => $element
-										->div(
-											array( 'id' => 'submitpost', 'class' => 'submitbox' ),
-											static fn ( $element ) => $element
-												->div(
-													array( 'id' => 'minor-publishing-actions' ),
-													static fn ( $element ) => $element
-														->div(
-															array( 'class' => 'hidden' ),
-															static fn ( $element ) => $element
-																->input( array(
-																	'type' => 'submit',
-																	'class' => 'button-primary',
-																	'name' => 'wpcf7-save',
-																	'value' => __( 'Save', 'wpcf7-entry-manager' ),
-																) )
-														) // .hidden
-												) // #minor-publishing-actions
-
-												->div(
-													array( 'id' => 'major-publishing-actions' ),
-													static fn ( $element ) => $element
-														->div(
-															array( 'id' => 'delete-action' ),
-															static fn ( $element ) => $element
-																->input( array(
-																	'type' => 'submit',
-																	'name' => 'wpcf7-delete',
-																	'class' => 'delete submitdelete',
-																	'value' => __( 'Delete', 'wpcf7-entry-manager' ),
-																) )
-														) // #delete-action
-
-														->div(
-															array( 'id' => 'publishing-action' ),
-															static fn ( $element ) => $element
-																->span( array( 'class' => 'spinner' ) )
-																->input( array(
-																	'type' => 'submit',
-																	'class' => 'button-primary',
-																	'name' => 'wpcf7-save',
-																	'value' => __( 'Save', 'wpcf7-entry-manager' ),
-																) )
-														) // #publishing-action
-
-														->clear()
-												), // #major-publishing-actions
-										), // #submitpost.submitbox
-								), // .inside
-						) // #submitdiv
-
-						->section(
-							array( 'id' => 'authordiv', 'class' => 'postbox' ),
-							static fn ( $element ) => $element
-								->div(
-									array( 'class' => 'postbox-header' ),
-									static fn ( $element ) => $element
-										->h2(
-											array(),
-											esc_html( __( 'Author', 'wpcf7-entry-manager' ) ),
-										)
-										->div(
-											array( 'class' => 'handle-actions hide-if-no-js' ),
-											static fn ( $element ) => $element
-												// Nothing for now
-										), // .handle-actions
-								) // .postbox-header
-
-								->div(
-									array( 'class' => 'inside' ),
+							->div( array( 'class' => 'postbox-header' ),
+								static fn ( $element ) => $element
+								->h2( child: esc_html( __( 'Status', 'wpcf7-entry-manager' ) ) )
+								->div( array( 'class' => 'handle-actions hide-if-no-js' ),
 									static fn ( $element ) => $element
 										// Nothing for now
-								), // .inside
+								), // .handle-actions
+							) // .postbox-header
+
+							->div( array( 'class' => 'inside' ),
+								static fn ( $element ) => $element
+								->div( array( 'id' => 'submitpost', 'class' => 'submitbox' ),
+									static fn ( $element ) => $element
+									->div( array( 'id' => 'minor-publishing-actions' ),
+										static fn ( $element ) => $element
+										->div( array( 'class' => 'hidden' ),
+											static fn ( $element ) => $element
+											->input( array(
+												'type' => 'submit',
+												'class' => 'button-primary',
+												'name' => 'wpcf7-save',
+												'value' => __( 'Save', 'wpcf7-entry-manager' ),
+											) )
+										) // .hidden
+									) // #minor-publishing-actions
+
+									->div( array( 'id' => 'major-publishing-actions' ),
+										static fn ( $element ) => $element
+										->div( array( 'id' => 'delete-action' ),
+											static fn ( $element ) => $element
+											->input( array(
+												'type' => 'submit',
+												'name' => 'wpcf7-delete',
+												'class' => 'delete submitdelete',
+												'value' => __( 'Delete', 'wpcf7-entry-manager' ),
+											) )
+										) // #delete-action
+
+										->div( array( 'id' => 'publishing-action' ),
+											static fn ( $element ) => $element
+											->span( array( 'class' => 'spinner' ) )
+											->input( array(
+												'type' => 'submit',
+												'class' => 'button-primary',
+												'name' => 'wpcf7-save',
+												'value' => __( 'Save', 'wpcf7-entry-manager' ),
+											) )
+										) // #publishing-action
+
+										->clear()
+									), // #major-publishing-actions
+								), // #submitpost.submitbox
+							), // .inside
+						) // #submitdiv
+
+						->section( array( 'id' => 'authordiv', 'class' => 'postbox' ),
+							static fn ( $element ) => $element
+							->div( array( 'class' => 'postbox-header' ),
+								static fn ( $element ) => $element
+								->h2( child: esc_html( __( 'Author', 'wpcf7-entry-manager' ) ))
+								->div( array( 'class' => 'handle-actions hide-if-no-js' ),
+									static fn ( $element ) => $element
+										// Nothing for now
+								), // .handle-actions
+							) // .postbox-header
+
+							->div( array( 'class' => 'inside' ),
+								static fn ( $element ) => $element
+									// Nothing for now
+							), // .inside
 						) // #authordiv
 					) // #postbox-container-1
 
-					->div( array(
-						'id' => 'postbox-container-2',
-						'class' => 'postbox-container',
-					), static fn ( $element ) => $element
-						->div(
-							array( 'id' => 'submission-entry-editor' ),
+					->div( array( 'id' => 'postbox-container-2', 'class' => 'postbox-container' ),
+						static fn ( $element ) => $element
+						->div( array( 'id' => 'submission-entry-editor' ),
 							static fn ( $element ) => $element
-								->section(
-									array( 'class' => 'postbox', ),
+							->section( array( 'class' => 'postbox', ),
+								static fn ( $element ) => $element
+								->div( array( 'class' => 'postbox-header' ),
 									static fn ( $element ) => $element
-										->div(
-											array( 'class' => 'postbox-header' ),
-											static fn ( $element ) => $element
-												->h2(
-													array(),
-													esc_html( __( 'Submission Entry', 'wpcf7-entry-manager' ) )
-												)
-												->div(
-													array( 'class' => 'handle-actions hide-if-no-js' ),
-													static fn ( $element ) => $element
-														// Nothing for now
-												), // .handle-actions
-										) // .postbox-header
-										->div(
-											array( 'class' => 'inside', ),
-											static fn ( $element ) => $element
-												// Nothing here
-										) // .inside
-								) // .postbox
+									->h2( child: esc_html( __( 'Submission Entry', 'wpcf7-entry-manager' ) ))
+									->div( array( 'class' => 'handle-actions hide-if-no-js' ),
+										static fn ( $element ) => $element
+											// Nothing for now
+									), // .handle-actions
+								) // .postbox-header
+								->div( array( 'class' => 'inside', ),
+									static fn ( $element ) => $element
+										// Nothing here
+								) // .inside
+							) // .postbox
 						) // #submission-entry-editor
 					) // #postbox-container-2
 				) // #post-body

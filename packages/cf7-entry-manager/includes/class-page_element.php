@@ -176,7 +176,7 @@ final class Page_Element {
 		$this->known_elements = array_unique( $known_elements );
 	}
 
-	public function __call( string $method, array $arguments = array() ): static
+	public function __call( string $method, array $args = array() ): static
 	{
 		if ( ! in_array( $method, $this->known_elements ) ) {
 			throw new \BadMethodCallException( sprintf(
@@ -185,7 +185,7 @@ final class Page_Element {
 			) );
 		}
 
-		$atts = $arguments[0] ?? array();
+		$atts = $args[0] ?? $args['atts'] ?? array();
 
 		if ( ! is_array( $atts ) ) {
 			throw new \TypeError( sprintf(
@@ -200,9 +200,9 @@ final class Page_Element {
 			return $this;
 		}
 
-		if ( isset( $arguments[1] ) && ! empty( $arguments[1] ) ) {
-			$child = $arguments[1];
+		$child = $args[1] ?? $args['child'] ?? null;
 
+		if ( ! empty( $child ) ) {
 			if ( is_string( $child )) {
 				$this->formatter->append_preformatted( $child );
 			} elseif ( $child instanceof Closure ) {
