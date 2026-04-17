@@ -229,6 +229,71 @@ final class Page_Element {
 		return $this;
 	}
 
+	public function whilespace(): static {
+		$this->formatter->append_preformatted( ' ' );
+
+		return $this;
+	}
+
+	/**
+	 * @param 'br'|'div'|'span' $mode
+	 */
+	public function clear( string $mode = 'br' ): static {
+		if ( ! in_array( $mode, array( 'br', 'div', 'span' ) ) ) {
+			throw new \InvalidArgumentException( sprintf(
+				'%s::clear(): Argument #1 ($mode) must be one of "br", "div", or "span", %s given',
+				__CLASS__, $mode
+			) );
+		}
+
+		$this->formatter->append_start_tag( $mode, array( 'class' => 'clear' ) );
+
+		return $this;
+	}
+
+	public function call( \Closure $callback, mixed ...$params ): static {
+		$this->formatter->call_user_func( $callback, ...$params );
+
+		return $this;
+	}
+
+	public function call_when( bool|callable $condition, \Closure $do, mixed ...$params ): static {
+		if ( is_callable( $condition ) ) {
+			$condition = call_user_func( $condition );
+		}
+
+		if ( $condition ) {
+			return $this->call( $do, ...$params );
+		}
+
+		return $this;
+	}
+
+	/**
+	 * @param bool|callable $condition
+	 * @param Closure(T) $do
+	 * @return T|void
+	 */
+	public function when( bool|callable $condition, \Closure|Page_Element $do ): static {
+		if ( is_callable( $condition ) ) {
+			$condition = call_user_func( $condition );
+		}
+
+		if ( $condition instanceof Page_Element ) {
+			$do = fn () => $do;
+		}
+
+		if ( $condition ) {
+			$return = $do( $this );
+
+			if ( $return instanceof static) {
+				return $return;
+			}
+		}
+
+		return $this;
+	}
+
 	public function render(): void {
 		if ( $this->within_element ) {
 			throw new \LogicException( 'Cannot render within an element' );
