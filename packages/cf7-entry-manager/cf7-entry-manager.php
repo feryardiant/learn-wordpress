@@ -55,6 +55,18 @@ register_deactivation_hook( __FILE__, static function() {
 	// Doing nothing on deactivation
 } );
 
+add_action(
+	'admin_enqueue_scripts',
+	static function ( string $hook_suffix ) {
+		if ( 'contact_page_wpcf7-entry-manager' !== $hook_suffix ) {
+			return;
+		}
+
+		wp_enqueue_style( 'my_custom_script', plugin_dir_url( __FILE__ ) . 'assets/style.css', array(), CF7EM_VERSION );
+	},
+	10, 1
+);
+
 add_action( 'wpcf7_init', static function() {
 	require_once __DIR__ . '/includes/admin.php';
 
