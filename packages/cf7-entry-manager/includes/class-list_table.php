@@ -202,7 +202,10 @@ class List_Table extends WP_List_Table {
 			return \esc_html( $author->display_name );
 		}
 
-		return '<span aria-hidden="true">—</span><span class="screen-reader-text">(no author)</span>';
+		return sprintf(
+			'<span aria-hidden="true">—</span><span class="screen-reader-text">%s</span>',
+			__( 'no author', 'wpcf7-entry-manager' )
+		);
 	}
 
 	/**
@@ -213,7 +216,10 @@ class List_Table extends WP_List_Table {
 			return \esc_html( $form->title() );
 		}
 
-		return '<span aria-hidden="true">—</span><span class="screen-reader-text">(no form)</span>';
+		return sprintf(
+			'<span aria-hidden="true">—</span><span class="screen-reader-text">%s</span>',
+			__( 'no form', 'wpcf7-entry-manager' )
+		);
 	}
 
 	/**
