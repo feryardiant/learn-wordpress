@@ -167,6 +167,7 @@ final class Page_Element {
 				WPCF7_HTMLFormatter::void_elements,
 				WPCF7_HTMLFormatter::p_parent_elements,
 				WPCF7_HTMLFormatter::p_nonparent_elements,
+				WPCF7_HTMLFormatter::p_child_elements,
 				WPCF7_HTMLFormatter::br_parent_elements,
 			),
 			fn( string $element ) => ! in_array( $element, $this->ignored_elements )
@@ -179,7 +180,7 @@ final class Page_Element {
 	{
 		if ( ! in_array( $method, $this->known_elements ) ) {
 			throw new \BadMethodCallException( sprintf(
-				'Call to undefined method: %s::$s()',
+				'Call to undefined method: %s::%s()',
 				__CLASS__, $method
 			) );
 		}
