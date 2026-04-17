@@ -50,6 +50,12 @@ final class Item {
 	public readonly ?DateTimeImmutable $datetime;
 
 	/**
+	 * Pair of form submission field & value.
+	 * @var array<string, string>
+	 */
+	public readonly array $submission;
+
+	/**
 	 * Set the read status for a submission item.
 	 *
 	 * @param int $id
@@ -157,6 +163,18 @@ final class Item {
 		$this->message = $item?->post_excerpt;
 		$this->datetime = \get_post_datetime( $item?->ID ?? null ) ?: null;
 		$this->read_status = (int) \get_post_meta( $this->id, '_wpcf7em_read_status', true );
+
+		$submission = array();
+
+		foreach ( \get_post_meta( $item?->ID ) as $field => $value ) {
+			if ( str_starts_with($field, '_' ) ) {
+				continue;
+			}
+
+			$submission[ $field ] = is_array( $value ) ? reset( $value ) : $value;
+		}
+
+		$this->submission = $submission;
 	}
 
 	/**
