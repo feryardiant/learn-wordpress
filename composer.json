@@ -18,12 +18,8 @@
         }
     ],
     "scripts": {
-        "lint": [
-            "phpcs -ps packages --standard=WordPress,PHPCompatibilityWP"
-        ],
-        "lint:fix": [
-            "phpcbf -ps packages --standard=WordPress,PHPCompatibilityWP"
-        ]
+        "lint": [ "phpcs" ],
+        "lint:fix": [ "phpcbf" ]
     },
     "require": {
         "php": ">=8.1"
