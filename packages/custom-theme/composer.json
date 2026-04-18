@@ -1,6 +1,7 @@
 {
     "name": "feryardiant/wp-custom-theme",
     "homepage": "https://github.com/feryardiant/local-wordpress/",
+    "description": "Custom theme for WordPress local development",
     "type": "wordpress-theme",
     "license": "GPL-3.0-or-later",
     "authors": [
