@@ -146,21 +146,21 @@ function admin_load_page(): void {
  */
 function admin_editor_panel( WPCF7_ContactForm $contact_form ): void {
 	$post_type_object = \get_post_type_object( 'form-submissions' );
-	$element = new Page_Element( array(
+	$elm = new Page_Element( array(
 		'allowed_html' => array(
 			'form' => array( 'method' => true ),
 		),
 	) );
 
-	$element->h2( array(), \esc_html( $post_type_object->label ) );
+	$elm->h2( array(), \esc_html( $post_type_object->label ) );
 
-	$element->fieldset( array( 'class' => 'wpcf7em-option' ), static fn ( $element ) => $element
+	$elm->fieldset( array( 'class' => 'wpcf7em-option' ), static fn ( $elm ) => $elm
 		->legend( array(), \esc_html(
 			__( 'You can edit the way you treat each submissions here.', 'wpcf7-entry-manager' )
 		) )
 
-		->table( array( 'class' => 'form-table' ), static fn ( $element ) => $element
-			->tbody( child: static function ( $element ) use ( $contact_form ) {
+		->table( array( 'class' => 'form-table' ), static fn ( $elm ) => $elm
+			->tbody( child: static function ( $elm ) use ( $contact_form ) {
 				$option = new Option( $contact_form );
 				$panel_id = 'wpcf7-entry-manager';
 
@@ -174,9 +174,9 @@ function admin_editor_panel( WPCF7_ContactForm $contact_form ): void {
 					) );
 
 					if ( $field['type'] === 'separator' ) {
-						$element->tr( child: static fn ( $element ) => $element
+						$elm->tr( child: static fn ( $elm ) => $elm
 							->td( array( 'colspan' => '2', 'style' => 'padding: 0;' ),
-								static fn ( $element ) => $element->hr()
+								static fn ( $elm ) => $elm->hr()
 							)
 						);
 
@@ -185,13 +185,13 @@ function admin_editor_panel( WPCF7_ContactForm $contact_form ): void {
 
 					$field_id = sprintf( '%s-%s', $panel_id, $id );
 
-					$element->tr( child: static fn ( $element ) => $element
+					$elm->tr( child: static fn ( $elm ) => $elm
 						->th( array( 'scope' => 'row' ),
-							static fn ( $element ) => $element
+							static fn ( $elm ) => $elm
 								->label( array( 'for' => $field_id ), $field['label'] )
 						)
 
-						->td( child: static function ( $element ) use ( $option, $id, $panel_id, $field, $field_id ) {
+						->td( child: static function ( $elm ) use ( $option, $id, $panel_id, $field, $field_id ) {
 							$field_atts = \wp_parse_args( $field['atts'], array(
 								'id' => $field_id,
 								'name' => sprintf( '%s[%s]', $panel_id, $id ),
@@ -209,38 +209,40 @@ function admin_editor_panel( WPCF7_ContactForm $contact_form ): void {
 							}
 
 							if ( $is_checkbox ) {
-								$element->label( array( 'for' => $field_id ) );
+								$elm->label( array( 'for' => $field_id ) );
 
 								$field_atts['value'] = 'on';
 								$field_atts['checked'] = $option[$id];
 							}
 
 							match ( $field['type'] ) {
-								'select' => $element->select( $field_atts,
-									static function ( $element ) use ( $field, $selected ) {
-										$element->option( array( 'selected' => empty( $selected ), 'value' => '' ),
+								'select' => $elm->select( $field_atts,
+									static function ( $elm ) use ( $field, $selected ) {
+										$elm->option( array( 'selected' => empty( $selected ), 'value' => '' ),
 											\esc_html( __( 'None selected', 'wpcf7-entry-manager' ) )
 										);
 
 										foreach ( $field['options'] as $value => $label ) {
 											$value = is_int( $value ) ? $label : $value;
 
-											$element->option( array(
+											$elm->option( array(
 												'value' => \esc_attr( $value ), 'selected' => $selected === $value
 											), \esc_html( $label ) );
 										}
 									}
 								),
 
-								default => $element->input( $field_atts ),
+								default => $elm->input( $field_atts ),
 							};
 
-							if ( ! empty( $field['description'] ) ) {
-								if ( $is_checkbox ) {
-									$element->span( array(), esc_html( $field['description'] ) );
-								} else {
-									$element->p( array( 'class' => 'description' ), esc_html( $field['description'] ) );
-								}
+							if ( empty( $field['description'] ) ) {
+								return;
+							}
+
+							if ( $is_checkbox ) {
+								$elm->span( array(), esc_html( $field['description'] ) );
+							} else {
+								$elm->p( array( 'class' => 'description' ), esc_html( $field['description'] ) );
 							}
 						} )
 					);
@@ -249,7 +251,7 @@ function admin_editor_panel( WPCF7_ContactForm $contact_form ): void {
 		)
 	);
 
-	$element->render();
+	$elm->render();
 }
 
 /**
@@ -275,15 +277,15 @@ function admin_management_page(): void {
 
 	$list_table->prepare_items();
 
-	$element = new Page_Element( array(
+	$elm = new Page_Element( array(
 		'allowed_html' => array(
 			'form' => array( 'method' => true ),
 		),
 	) );
 
-	$element->div(
+	$elm->div(
 		array( 'class' => 'wrap' ),
-		static fn ( $element ) => $element
+		static fn ( $elm ) => $elm
 			->h1( array( 'class' => 'wp-heading-inline' ),
 				\esc_html( $post_type_object->labels->items_list )
 			)
@@ -291,7 +293,7 @@ function admin_management_page(): void {
 			->hr( array( 'class' => 'wp-header-end' ) )
 
 			->form( array( 'method' => 'get' ),
-				static fn ( $element ) => $element
+				static fn ( $elm ) => $elm
 					->input( array(
 						'type' => 'hidden',
 						'name' => 'page',
@@ -309,7 +311,7 @@ function admin_management_page(): void {
 			)
 	);
 
-	$element->render();
+	$elm->render();
 }
 
 /**

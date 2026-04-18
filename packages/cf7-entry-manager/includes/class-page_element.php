@@ -170,7 +170,7 @@ final class Page_Element {
 				WPCF7_HTMLFormatter::p_child_elements,
 				WPCF7_HTMLFormatter::br_parent_elements,
 			),
-			fn( string $element ) => ! in_array( $element, $this->ignored_elements )
+			fn( string $elm ) => ! in_array( $elm, $this->ignored_elements )
 		);
 
 		$this->known_elements = array_unique( $known_elements );
