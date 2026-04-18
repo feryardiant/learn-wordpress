@@ -1,13 +1,18 @@
 === Entry Manager for Contact Form 7 ===
 Contributors: ferywardiyanto
 Tags: contact form 7, cf7 entry manager, leads capture, form storage, contact form submissions
-Donate link: https://github.com/sponsors/feryardiant
-Requires at least: 6.8
-Tested up to: 6.8
+Plugin Name: Entry Manager for Contact Form 7
+Description: Never lose a lead again. Save, manage, and convert every Contact Form 7 submission directly in your WordPress dashboard.
+Text Domain: cf7-entry-manager
+Stable tag: 0.1.0
+Tested up to: 6.9
+Requires at least: 6.0
 Requires PHP: 8.1
-Stable tag: 0.0.0
+Author: Fery Wardiyanto
+Author URI: https://feryardiant.id
 License: GPLv3 or later
-License URI: http://www.gnu.org/licenses/gpl-3.0.html
+Requires Plugins: contact-form-7
+Donate link: https://github.com/sponsors/feryardiant
 
 Never lose a lead again. Save, manage, and convert every Contact Form 7 submission directly in your WordPress dashboard.
 
@@ -30,7 +35,7 @@ Unlike basic storage plugins, this plugin allows you to map submissions to WordP
 
 = Minimum Requirements =
 
-* WordPress 6.8 or greater
+* WordPress 6.0 or greater
 * PHP version 8.1 or greater
 
 == Installation ==
@@ -55,9 +60,9 @@ Yes! You can configure the submission settings for each form individually.
 Submissions are stored as a private Custom Post Type called `form-submissions`, ensuring they are indexed and secure without bloating your options table.
 
 = Can I export the data? =
-In the current version (0.0.0), you can manage them via the dashboard. CSV Export is a planned feature for future updates.
+In the current version (0.1.0), you can manage them via the dashboard. CSV Export is a planned feature for future updates.
 
 == Changelog ==
 
-= 0.0.0 =
+= 0.1.0 =
 * Initial release.
