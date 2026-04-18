@@ -303,6 +303,19 @@ final class Page_Element {
 		return $this;
 	}
 
+	/**
+	 * @internal
+	 */
+	public function dump( mixed ...$params ): static {
+		$atts = array( 'class' => 'wpcf7em-debug' );
+
+		return $this->div( $atts, static fn ( $elm ) => $elm
+			->pre( child: static fn ( $elm ) => $elm
+				->call( static fn () => var_dump( ...$params ) )
+			)
+		);
+	}
+
 	public function render(): void {
 		if ( $this->within_element ) {
 			throw new \LogicException( 'Cannot render within an element' );

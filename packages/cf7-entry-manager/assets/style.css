@@ -16,6 +16,12 @@
     }
 }
 
+.wpcf7em-option {
+    .form-table {
+        max-width: 100%;
+    }
+}
+
 #poststuff .wpcf7em-box .inside {
     margin: 0;
     padding: 0;
@@ -135,5 +141,17 @@
         li:not(.selected) {
             color: var(--secondary-text-color);
         }
+    }
+}
+
+.wpcf7em-debug {
+    background-color: #e4e4e4;
+    border: 1px solid var(--optionBorderColor);
+
+    pre {
+        font-size: 13px;
+        font-style: normal;
+        margin: 0;
+        padding: 4px 8px;
     }
 }

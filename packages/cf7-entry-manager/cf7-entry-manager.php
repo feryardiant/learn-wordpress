@@ -85,7 +85,7 @@ register_deactivation_hook( __FILE__, static function() {
 add_action(
 	'admin_enqueue_scripts',
 	static function ( string $hook_suffix ) {
-		if ( 'contact_page_wpcf7-entry-manager' !== $hook_suffix ) {
+		if ( ! in_array( $hook_suffix, array( 'toplevel_page_wpcf7', 'contact_page_wpcf7-entry-manager' ), true ) ) {
 			return;
 		}
 

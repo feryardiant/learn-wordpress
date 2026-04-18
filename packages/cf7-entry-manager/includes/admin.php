@@ -154,7 +154,7 @@ function admin_editor_panel( WPCF7_ContactForm $contact_form ): void {
 
 	$element->h2( array(), \esc_html( $post_type_object->label ) );
 
-	$element->fieldset( child: static fn ( $element ) => $element
+	$element->fieldset( array( 'class' => 'wpcf7em-option' ), static fn ( $element ) => $element
 		->legend( array(), \esc_html(
 			__( 'You can edit the way you treat each submissions here.', 'wpcf7-entry-manager' )
 		) )
