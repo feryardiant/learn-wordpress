@@ -5,7 +5,7 @@ Donate link: https://github.com/sponsors/feryardiant
 Requires at least: 6.0
 Tested up to: 6.9
 Requires PHP: 8.1
-Stable tag: 0.0.0
+Stable tag: 0.1.0
 License: GPLv3 or later
 License URI: http://www.gnu.org/licenses/gpl-3.0.html
 
@@ -55,9 +55,9 @@ Yes! You can configure the submission settings for each form individually.
 Submissions are stored as a private Custom Post Type called `form-submissions`, ensuring they are indexed and secure without bloating your options table.
 
 = Can I export the data? =
-In the current version (0.0.0), you can manage them via the dashboard. CSV Export is a planned feature for future updates.
+In the current version (0.1.0), you can manage them via the dashboard. CSV Export is a planned feature for future updates.
 
 == Changelog ==
 
-= 0.0.0 =
+= 0.1.0 =
 * Initial release.

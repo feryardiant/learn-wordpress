@@ -5,7 +5,7 @@
  * Text Domain: cf7-entry-manager
  * Description: Never lose a lead again. Save, manage, and convert every Contact Form 7 submission directly in your WordPress dashboard.
  * Author: Fery Wardiyanto
- * Version: 0.0.0
+ * Version: 0.1.0
  * Author URI: https://feryardiant.id
  * License: GPLv3 or later
  * Requires at least: 6.0
@@ -19,7 +19,7 @@
 
 defined( 'ABSPATH' ) || exit;
 
-define( 'CF7EM_VERSION', '0.0.0' );
+define( 'CF7EM_VERSION', '0.1.0' );
 define( 'CF7EM_DEBUG', defined( 'WP_DEBUG' ) && boolval( WP_DEBUG ) );
 define( 'CF7EM__MINIMUM_WP_VERSION', '6.0' );
 define( 'CF7EM__MINIMUM_PHP_VERSION', '8.1' );
