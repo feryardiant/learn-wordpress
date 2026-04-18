@@ -21,7 +21,7 @@ defined( 'ABSPATH' ) || exit;
 
 define( 'CF7EM_VERSION', '0.0.0' );
 define( 'CF7EM_DEBUG', defined( 'WP_DEBUG' ) && boolval( WP_DEBUG ) );
-define( 'CF7EM__MINIMUM_WP_VERSION', '6.8' );
+define( 'CF7EM__MINIMUM_WP_VERSION', '6.0' );
 define( 'CF7EM__MINIMUM_PHP_VERSION', '8.1' );
 
 /**
