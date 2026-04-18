@@ -1,20 +1,23 @@
 <?php
 /**
- * Plugin Name: Entry Manager for Contact Form 7
- * Plugin URI: https://feryardiant.id
- * Text Domain: cf7-entry-manager
- * Description: Never lose a lead again. Save, manage, and convert every Contact Form 7 submission directly in your WordPress dashboard.
- * Author: Fery Wardiyanto
- * Version: 0.1.0
- * Author URI: https://feryardiant.id
- * License: GPLv3 or later
- * Requires at least: 6.0
- * Requires PHP: 8.1
- * Requires Plugins: contact-form-7
+ * Entry Manager for Contact Form 7
  *
  * @package feryardiant/cf7-entry-manager
  * @copyright Copyright (c) 2026 Fery Wardiyanto <https://feryardiant.id>
  * @license http://www.gnu.org/licenses/gpl-3.0.html GNU General Public License, version 3 or higher
+ *
+ * @wordpress-plugin
+ * Plugin Name: Entry Manager for Contact Form 7
+ * Description: Never lose a lead again. Save, manage, and convert every Contact Form 7 submission directly in your WordPress dashboard.
+ * Text Domain: cf7-entry-manager
+ * Version: 0.1.0
+ * Tested up to: 6.9
+ * Requires at least: 6.0
+ * Requires PHP: 8.1
+ * Author: Fery Wardiyanto
+ * Author URI: https://feryardiant.id
+ * License: GPLv3 or later
+ * Requires Plugins: contact-form-7
  */
 
 defined( 'ABSPATH' ) || exit;
