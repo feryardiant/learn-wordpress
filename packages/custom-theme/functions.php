@@ -12,7 +12,13 @@ add_action(
 	static function (): void {
 		$theme = wp_get_theme( get_stylesheet() );
 
-		wp_register_script( $theme->stylesheet, get_stylesheet_directory_uri() . '/custom.js', array(), $theme->version, array( 'defer' ) );
+		wp_register_script(
+			$theme->stylesheet,
+			get_stylesheet_directory_uri() . '/custom.js',
+			array(),
+			$theme->version,
+			array( 'strategy' => 'defer' )
+		);
 
 		wp_enqueue_script( $theme->stylesheet );
 	}
