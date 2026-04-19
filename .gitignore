@@ -9,13 +9,16 @@ Desktop.ini
 *.old
 *.log
 *.tmp
-*.zip
 
 # caches
 .cache
 *.cache
 *.tsbuildinfo
 *~
+
+# distribution
+*.mo
+*.zip
 
 # IDE Project Configurations
 # --------------------------

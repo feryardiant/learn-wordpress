@@ -10,6 +10,7 @@
  * Plugin Name: Entry Manager for Contact Form 7
  * Description: Never lose a lead again. Save, manage, and convert every Contact Form 7 submission directly in your WordPress dashboard.
  * Text Domain: cf7-entry-manager
+ * Domain Path: /languages
  * Version: 0.1.0
  * Tested up to: 6.9
  * Requires at least: 6.0
