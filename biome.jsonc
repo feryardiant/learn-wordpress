@@ -3,18 +3,17 @@
   "vcs": {
     "enabled": false,
     "clientKind": "git",
+    "defaultBranch": "main",
     "useIgnoreFile": false
   },
   "files": {
     "ignoreUnknown": false,
     "includes": [
-      ".github/**/*.yaml",
       "!docker/volumes",
       "packages/**/*.css",
       "packages/**/*.ts",
       "**/package.json",
-      "**/tsconfig.json",
-      "*.yaml"
+      "**/tsconfig.json"
     ]
   },
   "formatter": {

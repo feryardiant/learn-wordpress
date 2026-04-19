@@ -27,16 +27,13 @@
     "pre-commit": "bunx lint-staged --allow-empty"
   },
   "lint-staged": {
-    ".github/**/*.yaml": [
+    "*.{css,jsonc,ts}": [
       "biome format --write --no-errors-on-unmatched"
     ],
-    "packages/**/*.{css,ts}": [
-      "biome format --write --no-errors-on-unmatched"
-    ],
-    "packages/**/*.php": [
+    "*.php": [
       "vendor/bin/phpcbf"
     ],
-    "*.{ts,jsonc}": [
+    "{package,tsconfig}.json": [
       "biome format --write --no-errors-on-unmatched"
     ]
   }
