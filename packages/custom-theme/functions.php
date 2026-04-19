@@ -14,7 +14,7 @@ add_action(
 
 		wp_register_script(
 			$theme->stylesheet,
-			get_stylesheet_directory_uri() . '/custom.js',
+			get_stylesheet_directory_uri() . '/assets/custom.js',
 			array(),
 			$theme->version,
 			array( 'strategy' => 'defer' )
