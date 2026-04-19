@@ -6,6 +6,7 @@
       "name": "@feryardiant/local-wordpress",
       "devDependencies": {
         "@biomejs/biome": "^2.4.12",
+        "@tsconfig/bun": "^1.0.10",
         "@types/bun": "1.3.10",
         "lint-staged": "^16.4.0",
         "simple-git-hooks": "^2.13.1",
@@ -46,6 +47,8 @@
     "@feryardiant/cf7-entry-manager": ["@feryardiant/cf7-entry-manager@workspace:packages/cf7-entry-manager"],
 
     "@feryardiant/wp-custom-theme": ["@feryardiant/wp-custom-theme@workspace:packages/custom-theme"],
+
+    "@tsconfig/bun": ["@tsconfig/bun@1.0.10", "", {}, "sha512-5AV5YknQjNyoYzZ/8NG0dawqew/wH+x7ANiCfCIn29qo0cdbd1EryvFD1k5NSZWLBMOI/fGqMIaxi58GPIP9Cg=="],
 
     "@types/bun": ["@types/bun@1.3.10", "", { "dependencies": { "bun-types": "1.3.10" } }, "sha512-0+rlrUrOrTSskibryHbvQkDOWRJwJZqZlxrUs1u4oOoTln8+WIXBPmAuCF35SWB2z4Zl3E84Nl/D0P7803nigQ=="],
 
