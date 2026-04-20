@@ -1,13 +1,12 @@
-#!/bin/bash
+#!/usr/bin/env bash
 
 set -euo pipefail
-shopt -s nullglob
 
 e_start() {
     if [[ -n "${CI:-}" ]]; then
         echo '::group::'"$@"
     else
-        echo "$@"
+        echo -e "> \e[1;33m$@"
     fi
 }
 
@@ -18,31 +17,31 @@ e_end() {
 }
 
 e_start 'Download Core'
-vendor/bin/wp core download --version=${WP_VERSION}
+vendor/bin/wp core download --version=${WP_VERSION:-5.9}
 e_end
 
 e_start 'Configure Core'
 vendor/bin/wp config create \
-  --dbhost=${DB_HOST} --dbname=${DB_NAME} \
-  --dbuser=${DB_USER} --dbpass=${DB_PASS}
+  --dbhost=${DB_HOST:-127.0.0.1:3306} --dbname=${DB_NAME:-wordpress} \
+  --dbuser=${DB_USER:-sampleuser} --dbpass=${DB_PASS:-samplepass}
 e_end
 
 e_start 'Install Core'
 vendor/bin/wp core install \
-  --url="${SITE_URL}" --title="${SITE_TITLE}" \
-  --admin_user="${SITE_ADMIN_USER}" \
-  --admin_password="${SITE_ADMIN_PASS}" \
-  --admin_email="${SITE_ADMIN_EMAIL}" \
+  --url="${SITE_URL:-http://localhost}" --title="${SITE_TITLE:-'WordPress Local'}" \
+  --admin_user="${SITE_ADMIN_USER:-admin}" \
+  --admin_password="${SITE_ADMIN_PASS:-secret}" \
+  --admin_email="${SITE_ADMIN_EMAIL:-'admin@example.com'}" \
   --skip-email --allow-root
 e_end
 
 e_start 'Set options'
 vendor/bin/wp option update permalink_structure "/%postname%/"
-vendor/bin/wp option update timezone_string "${SITE_TIMEZONE}"
+vendor/bin/wp option update timezone_string "${SITE_TIMEZONE:-Asia/Jakarta}"
 e_end
 
 e_start 'Install plugins'
-vendor/bin/wp plugin install contact-form-7 --version=${CF7_VERSION}
+vendor/bin/wp plugin install contact-form-7 --version=${CF7_VERSION:-latest}
 e_end
 
 if vendor/bin/wp plugin is-active woocommerce; then
