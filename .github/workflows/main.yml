@@ -86,40 +86,12 @@ jobs:
           SITE_ADMIN_PASS: secret
           SITE_ADMIN_EMAIL: admin@example.com
           SITE_TIMEZONE: Asia/Jakarta
+
+          MULTISITE_ENABLED: 0
+          WP_VERSION: ${{ matrix.wp }}
+          CF7_VERSION: 5.6.4
         run: |
-          # Prepare WordPress
-          echo '::group::Download Core'
-          vendor/bin/wp core download --version=${{ matrix.wp }}
-          echo '::endgroup::'
-
-          echo '::group::Configure Core'
-          vendor/bin/wp config create \
-            --dbhost=${DB_HOST} --dbname=${DB_NAME} \
-            --dbuser=${DB_USER} --dbpass=${DB_PASS}
-          echo '::endgroup::'
-
-          echo '::group::Install Core'
-          vendor/bin/wp core install \
-            --url="${SITE_URL}" --title="${SITE_TITLE}" \
-            --admin_user="${SITE_ADMIN_USER}" \
-            --admin_password="${SITE_ADMIN_PASS}" \
-            --admin_email="${SITE_ADMIN_EMAIL}" \
-            --skip-email --allow-root
-          echo '::endgroup::'
-
-          echo '::group::Set options'
-          vendor/bin/wp option update permalink_structure "/%postname%/"
-          vendor/bin/wp option update timezone_string "${SITE_TIMEZONE}"
-          echo '::endgroup::'
-
-          echo '::group::Install plugins'
-          vendor/bin/wp plugin install contact-form-7 --version=5.6.4
-          echo '::endgroup::'
-
-          echo '::group::Verify'
-          # ls -lah tests/stubs/wordpress
-          vendor/bin/wp core is-installed
-          echo '::endgroup::'
+          bash scripts/init-wp.sh
 
       # - name: Lint
       #   run: |
