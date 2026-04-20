@@ -16,19 +16,27 @@ e_end() {
     fi
 }
 
+_wp() {
+    if command -v wp > /dev/null 2>&1; then
+        wp "$@"
+    else
+        vendor/bin/wp "$@"
+    fi
+}
+
 e_start 'Download Core'
-vendor/bin/wp core download --version=${WP_VERSION:-5.9}
+_wp core download --version=${WP_VERSION:-5.9}
 e_end
 
 e_start 'Configure Core'
-vendor/bin/wp config create \
+_wp config create \
   --dbhost=${DB_HOST:-127.0.0.1:3306} --dbname=${DB_NAME:-wordpress} \
   --dbuser=${DB_USER:-sampleuser} --dbpass=${DB_PASS:-samplepass}
 e_end
 
 e_start 'Install Core'
-vendor/bin/wp core install \
-  --url="${SITE_URL:-http://localhost}" --title="${SITE_TITLE:-'WordPress Local'}" \
+_wp core install \
+  --url="${SITE_URL:-'http://localhost'}" --title="${SITE_TITLE:-'WordPress Local'}" \
   --admin_user="${SITE_ADMIN_USER:-admin}" \
   --admin_password="${SITE_ADMIN_PASS:-secret}" \
   --admin_email="${SITE_ADMIN_EMAIL:-'admin@example.com'}" \
@@ -36,34 +44,34 @@ vendor/bin/wp core install \
 e_end
 
 e_start 'Set options'
-vendor/bin/wp option update permalink_structure "/%postname%/"
-vendor/bin/wp option update timezone_string "${SITE_TIMEZONE:-Asia/Jakarta}"
+_wp option update permalink_structure "/%postname%/"
+_wp option update timezone_string "${SITE_TIMEZONE:-Asia/Jakarta}"
 e_end
 
 e_start 'Install plugins'
-vendor/bin/wp plugin install contact-form-7 --version=${CF7_VERSION:-latest}
+_wp plugin install contact-form-7 --version=${CF7_VERSION:-latest}
 e_end
 
-if vendor/bin/wp plugin is-active woocommerce; then
+if _wp plugin is-active woocommerce; then
     e_start "Initializing default WooCommerce Settings..."
 
-    vendor/bin/wp option update woocommerce_store_address "${WC_STORE_ADDRESS}"
-    vendor/bin/wp option update woocommerce_store_city "${WC_STORE_CITY}"
-    vendor/bin/wp option update woocommerce_default_country "${WC_DEFAULT_COUNTRY}"
-    vendor/bin/wp option update woocommerce_currency "${WC_CURRENCY}"
-    vendor/bin/wp option update woocommerce_store_postcode "${WC_STORE_POSTCODE}"
+    _wp option update woocommerce_store_address "${WC_STORE_ADDRESS}"
+    _wp option update woocommerce_store_city "${WC_STORE_CITY}"
+    _wp option update woocommerce_default_country "${WC_DEFAULT_COUNTRY}"
+    _wp option update woocommerce_currency "${WC_CURRENCY}"
+    _wp option update woocommerce_store_postcode "${WC_STORE_POSTCODE}"
 
-    vendor/bin/wp option update woocommerce_weight_unit "${WC_WEIGHT_UNIT:-kg}"
-    vendor/bin/wp option update woocommerce_dimension_unit "${WC_DIMENSION_UNIT:-cm}"
-    vendor/bin/wp option update woocommerce_price_thousand_sep "${WC_PRICE_THOUSAND_SEP:-.}"
-    vendor/bin/wp option update woocommerce_price_decimal_sep "${WC_PRICE_DECIMAL_SEP:-,}"
-    vendor/bin/wp option update woocommerce_price_num_decimals "${WC_PRICE_DECIMAL_NUM:-,}"
+    _wp option update woocommerce_weight_unit "${WC_WEIGHT_UNIT:-kg}"
+    _wp option update woocommerce_dimension_unit "${WC_DIMENSION_UNIT:-cm}"
+    _wp option update woocommerce_price_thousand_sep "${WC_PRICE_THOUSAND_SEP:-.}"
+    _wp option update woocommerce_price_decimal_sep "${WC_PRICE_DECIMAL_SEP:-,}"
+    _wp option update woocommerce_price_num_decimals "${WC_PRICE_DECIMAL_NUM:-,}"
 
     # Skip the onboarding profile
-    vendor/bin/wp option update woocommerce_onboarding_profile '{"skipped":true}' --format=json
+    _wp option update woocommerce_onboarding_profile '{"skipped":true}' --format=json
 
     # Mark the task list as complete
-    vendor/bin/wp option update woocommerce_task_list_complete yes
+    _wp option update woocommerce_task_list_complete yes
     e_end
 fi
 
@@ -74,12 +82,12 @@ if [[ ${MULTISITE_ENABLED} -eq 1 ]]; then
     cat public/.htaccess.multisite > .htaccess
     echo 'Update .htaccess.'
 
-    vendor/bin/wp core multisite-convert
+    _wp core multisite-convert
 
-    vendor/bin/wp plugin activate $plugins --network
+    _wp plugin activate $plugins --network
     e_end
 fi
 
 e_start 'Verify'
-vendor/bin/wp core version --extra
+_wp core version --extra
 e_end
