@@ -106,8 +106,8 @@ The project is organized as a monorepo to simplify development of multiple WordP
 
 This project uses a hybrid licensing model:
 
-- **Environment & Tools**: [MIT License](LICENSE#development-environment-mit) (Found in root directory).
-- **WordPress Packages**: [GPLv3 or later](LICENSE#wordpress-packages-gpl-30-or-later) (Found in `packages/` directory).
+- **Environment & Tools**: [MIT License](LICENSE-MIT) (Found in root directory).
+- **WordPress Packages**: [GPLv3 or later](LICENSE-GPL) (Found in `packages/` directory).
 
 This split allows the evaluation environment to be used freely for various projects while ensuring the distributable plugins and themes are compliant with the WordPress ecosystem and protected by modern licensing standards.
 
