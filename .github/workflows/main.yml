@@ -49,8 +49,8 @@ jobs:
 
     strategy:
       matrix:
-        php: [8.1]
-        wp: [5.0]
+        php: ['8.1']
+        wp: ['5.0']
 
     steps:
       - name: Checkout
