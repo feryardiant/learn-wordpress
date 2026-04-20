@@ -38,4 +38,8 @@ abstract class BaseTestCase extends PHPUnitTestCase {
 		Monkey\tearDown();
 		parent::tearDown();
 	}
+
+	protected function package_file( string $file_path ): string {
+		return dirname( ABSPATH, 3 ) . '/packages/' . $file_path;
+	}
 }
