@@ -12,7 +12,7 @@ x-wp-envs: &wp-envs
 
 services:
   wp:
-    image: wordpress:6.9-php${PHP_VERSION:-8.4}-apache
+    image: wordpress:${WP_VERSION:-6.9}-php${PHP_VERSION:-8.4}-apache
     depends_on:
       db:
         condition: service_healthy
