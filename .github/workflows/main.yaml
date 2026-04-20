@@ -1,0 +1,94 @@
+name: Tests
+
+on:
+  pull_request:
+    branches: [main]
+  push:
+    branches: [main]
+
+jobs:
+  prepare:
+    name: Prepare
+    uses: projek-xyz/actions/.github/workflows/configure.yml@main
+    secrets: inherit
+    with:
+      php-version: 8.0
+
+    permissions:
+      pull-requests: write
+      contents: read
+
+  run:
+    name: on WordPress ${{ matrix.wp }}
+    runs-on: ubuntu-latest
+    needs: [prepare]
+
+    env:
+      DB_NAME: ${{ github.repository_owner }}
+      DB_USER: ${{ github.repository_owner }}
+      DB_PASS: secret
+      DB_HOST: mysql
+      PHP_VERSION: ${{ matrix.php }}
+      WP_VERSION: ${{ matrix.wp }}
+
+    services:
+      mysql:
+        image: mysql:8.0
+        env:
+          MYSQL_ROOT_PASSWORD: ${{ env.DB_PASS }}
+          MYSQL_DATABASE: ${{ env.DB_NAME }}
+          MYSQL_USER: ${{ env.DB_USER }}
+          MYSQL_PASSWORD: ${{ env.DB_PASS }}
+        options: >-
+          --health-cmd="mysqladmin ping"
+          --health-interval=10s
+          --health-timeout=5s
+          --health-retries=3
+        ports:
+          - 3306:3306
+
+    strategy:
+      matrix:
+        php: [8.0]
+        wp: [5.x]
+
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v6
+
+      - name: Set up bun
+        uses: oven-sh/setup-bun@v2
+        with:
+          bun-version: ${{ vars.BUN_VERSION || '1.3.10' }}
+
+      - name: Set up PHP
+        uses: shivammathur/setup-php@v2
+        with:
+          php-version: ${{ matrix.php }}
+          coverage: xdebug
+
+      - name: Cache composer dependencies
+        uses: actions/cache@v5
+        with:
+          path: ${{ needs.prepare.outputs.composer-cache }}
+          key: ${{ needs.prepare.outputs.composer-cache-key }}-composer-${{ hashFiles('**/composer.lock') }}
+          restore-keys: ${{ needs.prepare.outputs.composer-cache-key }}-composer-
+
+      - name: Install dependencies
+        run: |
+          composer install
+
+      - name: Install WordPress Core
+        env:
+          WP_ENV: testing
+          WP_HOME: http://localhost:8080
+          DB_HOST: 127.0.0.1:${{ job.services.mysql.ports['3306'] }}
+        run: .github/setup.sh
+
+      - name: Lint
+        run: |
+          vendor/bin/phpcs
+
+      - name: Unit Test
+        run: |
+          vendor/bin/phpunit --coverage-text
