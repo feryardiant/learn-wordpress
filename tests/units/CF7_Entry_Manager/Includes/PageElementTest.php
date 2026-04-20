@@ -1,13 +1,17 @@
 <?php
 
+declare(strict_types=1);
+
 namespace UnitTests\CF7_Entry_Manager\Includes;
 
 use CF7_Entry_Manager\Page_Element;
+use PHPUnit\Framework\Attributes\CoversClass;
 use UnitTests\CF7_Entry_Manager\TestCase;
 
 /**
  * Class PageElementTest
  */
+#[CoversClass( Page_Element::class )]
 class PageElementTest extends TestCase {
 	/**
 	 * Setup before any test in this class runs.

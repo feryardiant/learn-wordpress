@@ -1,13 +1,17 @@
 <?php
 
+declare(strict_types=1);
+
 namespace UnitTests\CF7_Entry_Manager\Includes;
 
 use CF7_Entry_Manager\Option;
+use PHPUnit\Framework\Attributes\CoversClass;
 use UnitTests\CF7_Entry_Manager\TestCase;
 
 /**
  * Class OptionTest
  */
+#[CoversClass( Option::class )]
 class OptionTest extends TestCase {
 	/**
 	 * Setup before any test in this class runs.

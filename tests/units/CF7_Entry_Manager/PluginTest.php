@@ -1,5 +1,7 @@
 <?php
 
+declare(strict_types=1);
+
 namespace UnitTests\CF7_Entry_Manager;
 
 use UnitTests\BaseTestCase;

@@ -1,5 +1,7 @@
 <?php
 
+declare(strict_types=1);
+
 namespace UnitTests\Custom_Theme;
 
 use UnitTests\BaseTestCase;
