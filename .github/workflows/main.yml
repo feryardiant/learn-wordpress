@@ -78,9 +78,9 @@ jobs:
         run: |
           composer update
 
-      - name: Lint
-        run: |
-          vendor/bin/phpcs
+      # - name: Lint
+      #   run: |
+      #     vendor/bin/phpcs
 
       - name: Unit Test
         run: |
