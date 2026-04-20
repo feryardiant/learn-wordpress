@@ -4,11 +4,17 @@ set -euo pipefail
 shopt -s nullglob
 
 e_start() {
-	echo '::group::'"$@"
+    if [[ -n "${CI:-}" ]]; then
+        echo '::group::'"$@"
+    else
+        echo "$@"
+    fi
 }
 
 e_end() {
-	echo '::endgroup::'
+    if [[ -n "${CI:-}" ]]; then
+        echo '::endgroup::'
+    fi
 }
 
 e_start 'Download Core'
