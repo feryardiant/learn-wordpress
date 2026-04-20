@@ -12,5 +12,7 @@ for pkg_dir in packages/*/; do
         continue
     fi
 
+    composer -d "$pkg_dir" install
+
     ./vendor/bin/wp dist-archive "$pkg_dir" public/dist --force --create-target-dir
 done
