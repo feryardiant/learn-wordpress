@@ -1,0 +1,35 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<phpunit xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+         xsi:noNamespaceSchemaLocation="https://schema.phpunit.de/10.5/phpunit.xsd"
+         bootstrap="tests/bootstrap.php"
+         cacheDirectory="tests/.cache"
+         executionOrder="depends,defects"
+         beStrictAboutOutputDuringTests="true"
+         failOnRisky="true"
+         failOnWarning="true"
+         colors="true"
+         cacheResult="false">
+    <testsuites>
+        <testsuite name="CF7 Entry Manager">
+            <directory>tests/units/CF7_Entry_Manager</directory>
+        </testsuite>
+
+        <testsuite name="Custom Theme">
+            <directory>tests/units/Custom_Theme</directory>
+        </testsuite>
+    </testsuites>
+
+    <source>
+        <include>
+            <directory suffix=".php">packages/cf7-entry-manager/includes</directory>
+            <file>packages/cf7-entry-manager/cf7-entry-manager.php</file>
+
+            <directory suffix=".php">packages/custom-theme</directory>
+        </include>
+
+        <exclude>
+            <directory>packages/cf7-entry-manager/vendor</directory>
+            <directory>packages/custom-theme/vendor</directory>
+        </exclude>
+    </source>
+</phpunit>
