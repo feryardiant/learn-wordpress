@@ -2,9 +2,9 @@
 
 namespace UnitTests;
 
-use PHPUnit\Framework\TestCase as PHPUnitTestCase;
 use Brain\Monkey;
 use Brain\Monkey\Functions;
+use PHPUnit\Framework\TestCase as PHPUnitTestCase;
 
 /**
  * Base Test Case for all unit tests.

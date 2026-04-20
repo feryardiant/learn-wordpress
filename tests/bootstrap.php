@@ -3,11 +3,12 @@
  * PHPUnit Bootstrap
  */
 
-require_once dirname( __DIR__ ) . '/vendor/autoload.php';
+$_root = dirname( __DIR__ );
+
+require_once $_root . '/vendor/autoload.php';
 
 // Mock WordPress constants if needed
 if ( ! defined( 'ABSPATH' ) ) {
-	$_root = dirname( __DIR__ );
 
 	define(
 		'ABSPATH',
