@@ -39,6 +39,18 @@ SITE_DEFAULT_THEME=twentytwentyfive
 
 # Network / Multisite
 MULTISITE_ENABLED=0 # Set to 1 for automated multisite conversion
+
+# WooCommerce (Automatic Configuration)
+WC_STORE_ADDRESS="Jl. Example No. 123"
+WC_STORE_CITY="Batang"
+WC_DEFAULT_COUNTRY="ID:JT"
+WC_CURRENCY="IDR"
+WC_STORE_POSTCODE="12345"
+WC_WEIGHT_UNIT="kg"
+WC_DIMENSION_UNIT="cm"
+WC_PRICE_THOUSAND_SEP="."
+WC_PRICE_DECIMAL_SEP=","
+WC_PRICE_DECIMAL_NUM=0
 ```
 
 ## 🌐 Multisite Support
@@ -48,17 +60,45 @@ This environment supports automated conversion to a **WordPress Multisite Networ
 - **Enable**: Set `MULTISITE_ENABLED=1` in your `.env` file.
 - **How it works**: The `cli` service will automatically convert the site and apply the necessary `.htaccess.multisite` configuration from the `public/` directory.
 
+## 🛍 WooCommerce Integration
+
+If `woocommerce` is present in `SITE_PLUGINS`, the environment automatically:
+- Configures store location and currency settings based on `WC_*` environment variables.
+- Sets units for weight and dimensions.
+- Configures price formatting (separators and decimals).
+- Skips the onboarding profile and marks the setup task list as complete for a "Ready-to-Evaluate" experience.
+
 ## 📧 Email Testing (Mailpit)
 
 All outgoing emails are automatically captured for testing using **Mailpit**.
 
 - **Dashboard**: [http://localhost:8025](http://localhost:8025) (or your configured `FORWARD_MAILPIT_PORT`).
-- **How it works**: The `cf7-entry-manager` plugin contains an automated PHP Mailer configuration (`phpmailer_init` hook) that routes all emails to the internal `mail` service container on port 1025.
+- **How it works**: The `custom-theme` theme contains an automated PHP Mailer configuration (`phpmailer_init` hook) that routes all emails to the internal `mail` service container on port 1025.
 
 ## 🔌 Evaluating Themes & Plugins
 
 - **Official Market (Repo)**: Add the slugs to `SITE_PLUGINS` or `SITE_THEMES` in your `.env` and restart the containers.
 - **Custom / Local**: Place your theme or plugin folder in the `packages/` directory (e.g., `packages/cf7-entry-manager`).
+
+## 🛠 Development Tools
+
+This project uses modern tools for maintenance and consistency:
+
+- **Linting & Formatting**:
+    - **Biome**: Used for `JS`, `TS`, `JSON`, and `CSS` files. Run `bun lint` or `bun lint:fix`.
+    - **PHPCS / PHPCBF**: Enforces WordPress Coding Standards. Run `composer lint` or `composer lint:fix`.
+- **Dependency Management**:
+    - **Bun**: Manages root development tools and package-specific JS dependencies via workspaces.
+    - **Composer**: Manages PHP dependencies, utilizing `wikimedia/composer-merge-plugin` to discover and merge `composer.json` files from the `packages/` directory.
+- **Internationalization (i18n)**:
+    - **POT Generation**: Use `scripts/make-pot.sh` to automatically generate `.pot` files for all local packages using `wp-cli i18n`.
+
+## 📦 Monorepo Structure
+
+The project is organized as a monorepo to simplify development of multiple WordPress assets:
+
+- **Workspaces**: Configured in `package.json` to allow centralized management of node modules.
+- **Shared Dependencies**: Common development tools (linters, pre-commit hooks) are shared across all packages to ensure a unified standard.
 
 ## 🛠 Lifecycle Commands
 
@@ -72,5 +112,6 @@ All outgoing emails are automatically captured for testing using **Mailpit**.
 - `docker/init-wp.sh`: The "Zero-Config" engine—automatically handles installation, options, and branding.
 - `packages/`: Local themes and plugins (includes `custom-theme` and `cf7-entry-manager`).
 - `public/`: Static assets (favicon) and server configurations (.htaccess).
+- `scripts/`: Development scripts (e.g., `make-pot.sh`).
 - `volumes/`: Persisted data for WordPress files, MySQL, and Mailpit.
 - `compose.yaml`: Docker services orchestration.
