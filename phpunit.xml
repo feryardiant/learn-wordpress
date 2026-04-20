@@ -11,11 +11,11 @@
          cacheResult="false">
     <testsuites>
         <testsuite name="CF7 Entry Manager">
-            <directory>tests/units/CF7_Entry_Manager</directory>
+            <directory>tests/*/CF7_Entry_Manager</directory>
         </testsuite>
 
         <testsuite name="Custom Theme">
-            <directory>tests/units/Custom_Theme</directory>
+            <directory>tests/*/Custom_Theme</directory>
         </testsuite>
     </testsuites>
 
@@ -32,4 +32,8 @@
             <directory>packages/custom-theme/vendor</directory>
         </exclude>
     </source>
+
+    <php>
+        <env name="WP_TESTS_SKIP_INSTALL" value="1"/>
+    </php>
 </phpunit>
