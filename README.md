@@ -92,6 +92,8 @@ This project uses modern tools for maintenance and consistency:
     - **Composer**: Manages PHP dependencies, utilizing `wikimedia/composer-merge-plugin` to discover and merge `composer.json` files from the `packages/` directory.
 - **Internationalization (i18n)**:
     - **POT Generation**: Use `scripts/make-pot.sh` to automatically generate `.pot` files for all local packages using `wp-cli i18n`.
+- **Distribution**:
+    - **Archive Generation**: Use `scripts/make-dist.sh` to create distribution-ready ZIP archives for themes and plugins, automatically excluding development files based on `.distignore`.
 
 ## 📦 Monorepo Structure
 

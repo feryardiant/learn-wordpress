@@ -17,6 +17,7 @@ Desktop.ini
 *~
 
 # distribution
+dist
 *.mo
 *.zip
 
@@ -48,6 +49,7 @@ coverage
 *.lcov
 
 # Other package managers
+packages/*/composer.lock
 yarn.lock
 pnpm-lock.yaml
 package-lock.json
