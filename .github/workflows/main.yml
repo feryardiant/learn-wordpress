@@ -87,6 +87,7 @@ jobs:
           SITE_ADMIN_EMAIL: admin@example.com
           SITE_TIMEZONE: Asia/Jakarta
         run: |
+          # Prepare WordPress
           echo '::group::Download Core'
           vendor/bin/wp core download --version=${{ matrix.wp }}
           echo '::endgroup::'
@@ -106,17 +107,17 @@ jobs:
             --skip-email --allow-root
           echo '::endgroup::'
 
-          # echo '::group::Set options'
-          # vendor/bin/wp option update permalink_structure "/%postname%/"
-          # vendor/bin/wp option update timezone_string "${SITE_TIMEZONE}"
-          # echo '::endgroup::'
+          echo '::group::Set options'
+          vendor/bin/wp option update permalink_structure "/%postname%/"
+          vendor/bin/wp option update timezone_string "${SITE_TIMEZONE}"
+          echo '::endgroup::'
 
-          # echo '::group::Install plugins'
-          # vendor/bin/wp plugin install contact-form-7
-          # echo '::endgroup::'
+          echo '::group::Install plugins'
+          vendor/bin/wp plugin install contact-form-7
+          echo '::endgroup::'
 
           echo '::group::Verify'
-          ls -lah tests/stubs/wordpress
+          # ls -lah tests/stubs/wordpress
           vendor/bin/wp core is-installed
           echo '::endgroup::'
 
