@@ -6,20 +6,34 @@ set -euo pipefail
 
 declare -A plugins_map
 
-                  #                 Plugin  Woo     Blocksy
-                  # CF7     JetPack Check   Comm.   Comp.
-plugins_map['5.9']='5.6.4	13.6.1	none	8.1.4	2.1.38'
-plugins_map['6.0']='5.7.7	13.6.1	none	8.4.0	2.1.38'
-plugins_map['6.1']='5.7.7	13.6.1	none	8.4.0	2.1.38'
-plugins_map['6.2']='5.8.7	13.6.1	1.0.0	8.4.0	2.1.38'
-plugins_map['6.3']='5.9.1	13.6.1	1.0.0	9.2.3	2.1.38'
-plugins_map['6.4']='5.9.1	13.6.1	1.9.0	9.2.3	2.1.38'
-plugins_map['6.5']='5.9.1	14.0.0	1.9.0	10.0.3	2.1.38'
-plugins_map['6.6']='6.0.0	14.5.0	1.9.0	10.0.3	2.1.38'
-plugins_map['6.7']='6.1.0	15.4.0	1.9.0	10.6.2	2.1.38'
-plugins_map['6.8']='6.1.0	15.7.1	1.9.0	10.6.2	2.1.38'
-plugins_map['6.9']='6.2.0	15.7.1	1.9.0	10.6.2	2.1.38'
-plugins_map['7.0']='6.2.0	15.7.1	1.9.0	10.6.2	2.1.38'
+                  # Blocksy Plugin  Contact         Woo
+                  # Comp.   Check   Form7   JetPack Comm.
+plugins_map['5.9']='2.0.86	0.2.0	5.7.7	11.2.2	9.2.3'
+plugins_map['6.0']='2.0.86	0.2.3	5.7.7	12.0.1	9.2.3'
+plugins_map['6.1']='2.0.86	0.2.3	5.7.7	12.5.1	9.2.3'
+plugins_map['6.2']='2.0.86	0.2.3	5.8.7	12.7.1	9.2.3'
+plugins_map['6.3']='2.0.86	1.9.0	5.9.8	13.2.1	9.2.3'
+plugins_map['6.4']='2.0.86	1.9.0	5.9.8	13.6.1	9.2.3'
+plugins_map['6.5']='2.1.38	1.9.0	5.9.8	13.9.1	10.6.2'
+plugins_map['6.6']='2.1.38	1.9.0	6.0.6	14.4.1	10.6.2'
+plugins_map['6.7']='2.1.38	1.9.0	6.1.5	15.1.1	10.6.2'
+plugins_map['6.8']='2.1.38	1.9.0	6.1.5	15.7.1	10.6.2'
+plugins_map['6.9']='2.1.38	1.9.0	6.1.5	15.7.1	10.6.2'
+
+declare -A themes_map
+
+                  # Blocksy
+themes_map['5.9']='2.0.80'
+themes_map['6.0']='2.0.86'
+themes_map['6.1']='2.0.86'
+themes_map['6.2']='2.0.86'
+themes_map['6.3']='2.0.86'
+themes_map['6.4']='2.0.86'
+themes_map['6.5']='2.1.38'
+themes_map['6.6']='2.1.38'
+themes_map['6.7']='2.1.38'
+themes_map['6.8']='2.1.38'
+themes_map['6.9']='2.1.38'
 
 if [[ -f "$PWD/.env" ]]; then
     . "$PWD/.env"
@@ -29,19 +43,20 @@ WP_VERSION=${WP_VERSION:-'5.9'}
 # Reduce to major.minor for map lookup
 wp_version_key=$(echo "${WP_VERSION}" | awk -F. '{printf "%s.%s", $1, $2}')
 wp_plugins=(${plugins_map[${wp_version_key}]//\t/ })
+wp_themes=(${themes_map[${wp_version_key}]//\t/ })
 
 declare -A plugin_supports
 
+plugin_supports['blocksy-companion']="${wp_plugins[0]:-2.0.86}"
+plugin_supports['plugin-check']="${wp_plugins[1]:-0.2.0}"
+plugin_supports['contact-form-7']="${wp_plugins[2]:-5.7.7}"
+plugin_supports['jetpack']="${wp_plugins[3]:-11.2.2}"
+plugin_supports['woocommerce']="${wp_plugins[4]:-9.2.3}"
+
+declare -A theme_supports
+
 # ContactForm7
-plugin_supports['contact-form-7']="${wp_plugins[0]:-6.2.0}"
-# JetPack
-plugin_supports['jetpack']="${wp_plugins[1]:-15.7.1}"
-# PluginCheck
-plugin_supports['plugin-check']="${wp_plugins[2]:-1.9.0}"
-# WooCommerce
-plugin_supports['woocommerce']="${wp_plugins[3]:-10.6.2}"
-# BlocksyCompanion
-plugin_supports['blocksy-companion']="${wp_plugins[4]:-2.1.38}"
+theme_supports['blocksy']="${wp_themes[0]:-2.0.86}"
 
 ASSET_DIR=${ASSET_DIR:-"$PWD/assets"}
 INSTALL_DIR=${INSTALL_DIR:-"$PWD/docker/volumes/wordpress"}
@@ -103,16 +118,16 @@ if [[ -n "${SITE_PLUGINS:-}" ]]; then
             continue
         fi
 
-        version="${plugin_supports[$plugin]:-}"
-        if [[ "$version" == "none" ]]; then
+        plugin_version="${plugin_supports[$plugin]:-}"
+        if [[ "$plugin_version" == "none" ]]; then
             echo " - Skipping $plugin: incompatible with WordPress ${WP_VERSION}"
             continue
         fi
 
-        if [[ -n "$version" ]]; then
-            _wp plugin install "$plugin" --version=$version --activate
-
+        if [[ -n "$plugin_version" ]]; then
+            _wp plugin install "$plugin" --version=$plugin_version
             installed_plugins="$installed_plugins $plugin"
+
             continue
         fi
 
@@ -120,10 +135,12 @@ if [[ -n "${SITE_PLUGINS:-}" ]]; then
     done
 
     if [[ -n "$plugins" ]]; then
-        _wp plugin install $plugins --activate
+        _wp plugin install $plugins
 
         installed_plugins="$installed_plugins $plugins"
     fi
+
+    _wp plugin activate $installed_plugins
     e_end
 fi
 
@@ -171,6 +188,18 @@ if [[ -n "${SITE_THEMES:-}" ]]; then
     for theme in ${SITE_THEMES//,/ }; do
         if _wp theme is-installed "$theme"; then
             echo " - $theme is already installed."
+            continue
+        fi
+
+        theme_version="${theme_supports[$theme]:-}"
+        if [[ "$theme_version" == "none" ]]; then
+            echo " - Skipping $theme: incompatible with WordPress ${WP_VERSION}"
+            continue
+        fi
+
+        if [[ -n "$theme_version" ]]; then
+            _wp theme install "$theme" --version=$theme_version
+
             continue
         fi
 
