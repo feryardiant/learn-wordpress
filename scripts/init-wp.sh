@@ -149,12 +149,11 @@ if [[ ${MULTISITE_ENABLED:-0} -eq 1 ]]; then
 fi
 
 if [[ -n "${SITE_THEMES:-}" ]]; then
-    e_start 'Install default theme'
-    SITE_DEFAULT_THEME=${SITE_DEFAULT_THEME:-}
+    e_start 'Install default themes'
     themes=""
 
     for theme in ${SITE_THEMES//,/ }; do
-        if wp theme is-installed "$theme"; then
+        if _wp theme is-installed "$theme"; then
             echo " - $theme is already installed."
             continue
         fi
@@ -163,11 +162,13 @@ if [[ -n "${SITE_THEMES:-}" ]]; then
     done
 
     if [[ -n "$themes" ]]; then
-        wp theme install $themes
+        _wp theme install $themes
     fi
 
-    if [[ -n "$SITE_DEFAULT_THEME" ]] && ! wp theme is-installed "$SITE_DEFAULT_THEME"; then
-        wp theme install $SITE_DEFAULT_THEME
+    SITE_DEFAULT_THEME=${SITE_DEFAULT_THEME:-}
+
+    if [[ -n "$SITE_DEFAULT_THEME" ]] && _wp theme is-installed "$SITE_DEFAULT_THEME"; then
+        _wp theme activate $SITE_DEFAULT_THEME
     fi
     e_end
 fi
