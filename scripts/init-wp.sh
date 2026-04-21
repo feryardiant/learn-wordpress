@@ -41,15 +41,18 @@ wpcf7_map['6.8']='6.1'
 wpcf7_map['6.9']='6.1'
 wpcf7_map['7.0']='6.1'
 
+# Reduce to major.minor for map lookup
 WP_VERSION=${WP_VERSION:-'5.9'}
-CF7_VERSION=${wpcf7_map[${WP_VERSION}]}
+WP_VERSION=$(echo "${WP_VERSION}" | awk -F. '{printf "%s.%s", $1, $2}')
+
+CF7_VERSION=${wpcf7_map[${WP_VERSION}]:-'6.1'}
 
 PUBLIC_DIR=${PUBLIC_DIR:-"$PWD/public"}
 INSTALL_DIR=${INSTALL_DIR:-"$PWD/docker/volumes/wordpress"}
 
 SITE_URL=${SITE_URL:-'http://localhost'}
 
-if wp core is-installed --url="${SITE_URL}" --allow-root; then
+if _wp core is-installed --url="${SITE_URL}" --allow-root; then
   echo "WordPress is already installed."
 else
     if [[ ! -d "${INSTALL_DIR}" ]]; then
@@ -80,8 +83,8 @@ else
     _wp option update timezone_string "${SITE_TIMEZONE:-Asia/Jakarta}"
     e_end
 
-    if [[ ! -f $INSTALL_DIR/favicon.ico ]]; then
-    cp $PUBLIC_DIR/favicon.ico $INSTALL_DIR/favicon.ico
+    if [[ ! -f "$INSTALL_DIR/favicon.ico" ]]; then
+        cp "$PUBLIC_DIR/favicon.ico" "$INSTALL_DIR/favicon.ico"
     fi
 fi
 
