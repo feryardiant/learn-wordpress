@@ -81,6 +81,7 @@ jobs:
         env:
           DB_HOST: 127.0.0.1:${{ job.services.mysql.ports['3306'] }}
           MULTISITE_ENABLED: 0
+          SITE_PLUGINS: contact-form-7
           WP_VERSION: ${{ matrix.wp }}
         run: |
           bash scripts/init-wp.sh
