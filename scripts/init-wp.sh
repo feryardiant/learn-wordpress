@@ -42,8 +42,14 @@ fi
 WP_VERSION=${WP_VERSION:-'5.9'}
 # Reduce to major.minor for map lookup
 wp_version_key=$(echo "${WP_VERSION}" | awk -F. '{printf "%s.%s", $1, $2}')
-wp_plugins=(${plugins_map[${wp_version_key}]//\s/ })
-wp_themes=(${themes_map[${wp_version_key}]//\s/ })
+
+wp_plugins=(${plugins_map[${wp_version_key}]:-})
+wp_themes=(${themes_map[${wp_version_key}]:-})
+
+if ((${#wp_themes[@]} == 0 )); then
+    echo -e "\e[1;31mError:\e[0m Unsupported WordPress version ${WP_VERSION}."
+    exit 1
+fi
 
 declare -A plugin_supports
 
@@ -51,7 +57,7 @@ plugin_supports['blocksy-companion']="${wp_plugins[0]:-2.0.86}"
 plugin_supports['plugin-check']="${wp_plugins[1]:-0.2.0}"
 plugin_supports['contact-form-7']="${wp_plugins[2]:-5.7.7}"
 plugin_supports['jetpack']="${wp_plugins[3]:-11.2.2}"
-plugin_supports['woocommerce']="${wp_plugins[4]:-9.2.3}"
+plugin_supports['woocommerce']="${wp_plugins[4]:-7.5.2}"
 
 declare -A theme_supports
 
