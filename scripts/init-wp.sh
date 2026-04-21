@@ -30,23 +30,23 @@ INSTALL_DIR=${INSTALL_DIR:-"$PWD/docker/volumes/wordpress"}
 
 SITE_URL=${SITE_URL:-'http://localhost'}
 
+if [[ ! -d "${INSTALL_DIR}" ]]; then
+    e_start 'Download Core'
+    _wp core download --version=${WP_VERSION}
+    e_end
+fi
+
+if [[ ! -f "${INSTALL_DIR}/wp-config.php" ]]; then
+    e_start 'Configure Core'
+    _wp config create \
+        --dbhost=${DB_HOST:-127.0.0.1:3306} --dbname=${DB_NAME:-wordpress} \
+        --dbuser=${DB_USER:-sampleuser} --dbpass=${DB_PASS:-samplepass}
+    e_end
+fi
+
 if _wp core is-installed --url="${SITE_URL}" --allow-root; then
   echo "WordPress is already installed."
 else
-    if [[ ! -d "${INSTALL_DIR}" ]]; then
-        e_start 'Download Core'
-        _wp core download --version=${WP_VERSION}
-        e_end
-    fi
-
-    if [[ ! -f "${INSTALL_DIR}/wp-config.php" ]]; then
-        e_start 'Configure Core'
-        _wp config create \
-            --dbhost=${DB_HOST:-127.0.0.1:3306} --dbname=${DB_NAME:-wordpress} \
-            --dbuser=${DB_USER:-sampleuser} --dbpass=${DB_PASS:-samplepass}
-        e_end
-    fi
-
     e_start 'Install Core'
     _wp core install \
         --url="${SITE_URL}" --title="${SITE_TITLE:-'WordPress Local'}" \
