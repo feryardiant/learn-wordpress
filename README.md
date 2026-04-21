@@ -44,7 +44,7 @@ All outgoing emails are captured by **Mailpit**.
 ## 🔌 Evaluating Your Assets
 
 ### 📁 Local Packages
-Place your theme or plugin folder in the `packages/` directory. They are automatically discovered and can be managed via the root toolset.
+Place your theme or plugin folder in the [`packages/`](packages/) directory. They are automatically discovered and can be managed via the root toolset.
 
 ### 🌐 Official Repository
 Add slugs to `SITE_PLUGINS` or `SITE_THEMES` in your `.env`:
@@ -57,11 +57,11 @@ SITE_PLUGINS=akismet,woocommerce,contact-form-7
 This project is organized as a **monorepo** to simplify the development of multiple WordPress assets simultaneously.
 
 ### 📂 Directory Structure
-- `docker/`: Core "Zero-Config" engine (`init-wp.sh`).
-- `packages/`: Local themes and plugins (e.g., `cf7-entry-manager`).
-- `public/`: Static assets, favicon, and server configurations.
-- `scripts/`: Development utilities (POT generation, Distribution).
-- `volumes/`: Persisted data for WordPress, MySQL, and Mailpit.
+- [`docker/`](docker/): Core "Zero-Config" engine ([`init-wp.sh`](scripts/init-wp.sh)).
+- [`packages/`](packages/): Local themes and plugins (e.g., [`cf7-entry-manager`](packages/cf7-entry-manager)).
+- [`public/`](public/): Static assets, favicon, and server configurations.
+- [`scripts/`](scripts/): Development utilities (POT generation, Distribution).
+- [`volumes/`](volumes/): Persisted data for WordPress, MySQL, and Mailpit.
 
 ## 🛠️ Development Tools
 
@@ -74,8 +74,28 @@ This project is organized as a **monorepo** to simplify the development of multi
 - **PHPCS**: Enforces WordPress Coding Standards (`composer lint`).
 
 ### 📦 Scripts
-- `scripts/make-pot.sh`: Generates translation files for all packages.
-- `scripts/make-dist.sh`: Creates production-ready ZIP archives.
+- [`scripts/init-wp.sh`](scripts/init-wp.sh): Dynamically download, configure, and install a fresh WordPress core.
+- [`scripts/make-pot.sh`](scripts/make-pot.sh): Generates translation files for all packages.
+- [`scripts/make-dist.sh`](scripts/make-dist.sh): Creates production-ready ZIP archives.
+
+## 🧪 Testing & Quality Assurance
+
+This project includes a robust testing infrastructure for both unit and integration tests.
+
+### 🛠️ Testing Stack
+- **PHPUnit 10.5**: The core testing framework.
+- **Brain Monkey**: For advanced WordPress hook and function mocking.
+
+### 🚀 Running Tests Locally
+Ensure you have installed development dependencies via `composer install`.
+```bash
+composer test
+```
+This will execute all test suites defined in [`phpunit.xml`](phpunit.xml) and output a text-based coverage report.
+
+### 🔄 Continuous Integration (CI)
+Automated testing is integrated into the development lifecycle via **GitHub Actions** ([`.github/workflows/main.yml`](.github/workflows/main.yml)):
+- **Matrix Testing**: Every Pull Request and Push to `main` is automatically tested across multiple **PHP** and **WordPress** versions.
 
 ## ⚙️ Lifecycle & Configuration
 
