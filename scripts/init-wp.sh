@@ -2,29 +2,7 @@
 
 set -euo pipefail
 
-e_start() {
-    if [[ -n "${CI:-}" ]]; then
-        echo "::group::$*"
-    else
-        echo -e "> \e[1;33m$*\e[0m"
-    fi
-}
-
-e_end() {
-    if [[ -n "${CI:-}" ]]; then
-        echo '::endgroup::'
-    else
-        echo ''
-    fi
-}
-
-_wp() {
-    if command -v wp > /dev/null 2>&1; then
-        wp "$@"
-    else
-        vendor/bin/wp "$@"
-    fi
-}
+. "$(dirname "$0")/_util.sh"
 
 declare -A wpcf7_map
 
@@ -47,7 +25,7 @@ WP_VERSION=$(echo "${WP_VERSION}" | awk -F. '{printf "%s.%s", $1, $2}')
 
 CF7_VERSION=${wpcf7_map[${WP_VERSION}]:-'6.1'}
 
-PUBLIC_DIR=${PUBLIC_DIR:-"$PWD/public"}
+ASSET_DIR=${ASSET_DIR:-"$PWD/assets"}
 INSTALL_DIR=${INSTALL_DIR:-"$PWD/docker/volumes/wordpress"}
 
 SITE_URL=${SITE_URL:-'http://localhost'}
@@ -84,7 +62,7 @@ else
     e_end
 
     if [[ ! -f "$INSTALL_DIR/favicon.ico" ]]; then
-        cp "$PUBLIC_DIR/favicon.ico" "$INSTALL_DIR/favicon.ico"
+        cp "$ASSET_DIR/favicon.ico" "$INSTALL_DIR/favicon.ico"
     fi
 fi
 
@@ -139,7 +117,7 @@ if [[ ${MULTISITE_ENABLED:-0} -eq 1 ]]; then
     e_start "Configure multisite"
 
     # https://developer.wordpress.org/advanced-administration/server/web-server/httpd/#multisite
-    cat "$PUBLIC_DIR/.htaccess.multisite" > "$INSTALL_DIR/.htaccess"
+    cat "$ASSET_DIR/.htaccess.multisite" > "$INSTALL_DIR/.htaccess"
     echo 'Update .htaccess.'
 
     _wp core multisite-convert
