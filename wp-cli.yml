@@ -1,2 +1,2 @@
-path: tests/stubs/wordpress
+path: docker/volumes/wordpress
 color: true
