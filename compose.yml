@@ -66,7 +66,7 @@ services:
       INSTALL_DIR: /var/www/html
       WP_VERSION: ${WP_VERSION:-6.9}
     volumes:
-      - ~/.wp-cli:/home/www-data/.wp-cli
+      - ${HOME}/.wp-cli:/home/www-data/.wp-cli
       - ./assets:/var/www/setup/assets
       - ./docker/volumes/wordpress:/var/www/html
       - ./packages/cf7-entry-manager:/var/www/html/wp-content/plugins/cf7-entry-manager:ro

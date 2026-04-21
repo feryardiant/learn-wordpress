@@ -18,7 +18,7 @@ for pkg_dir in packages/*/; do
 
     composer -d "$pkg_dir" install
 
-    rm "$ASSET_DIR/dist/$pkg.*.zip"
+    rm -f "$ASSET_DIR/dist/$pkg.*.zip"
 
     cp LICENSE-GPL "$pkg_dir/license.txt"
 

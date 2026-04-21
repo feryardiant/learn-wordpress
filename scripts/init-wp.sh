@@ -23,7 +23,7 @@ plugins_map['6.9']='2.1.38	1.9.0	6.1.5	15.7.1	10.6.2'
 declare -A themes_map
 
                   # Blocksy
-themes_map['5.9']='2.0.80'
+themes_map['5.9']='2.0.86'
 themes_map['6.0']='2.0.86'
 themes_map['6.1']='2.0.86'
 themes_map['6.2']='2.0.86'
@@ -92,12 +92,12 @@ else
         --admin_user=${SITE_ADMIN_USER:-admin} \
         --admin_password=${SITE_ADMIN_PASS:-secret} \
         --admin_email=${SITE_ADMIN_EMAIL:-'admin@example.com'} \
-        --skip-email --allow-root
+        --skip-email --allow-root --color
     e_end
 
     e_start 'Set up default options'
-    _wp option update permalink_structure "/%postname%/"
-    _wp option update timezone_string "${SITE_TIMEZONE:-Asia/Jakarta}"
+    _wp option update permalink_structure "/%postname%/" --color
+    _wp option update timezone_string "${SITE_TIMEZONE:-Asia/Jakarta}" --color
     e_end
 
     if [[ ! -f "$INSTALL_DIR/favicon.ico" ]]; then
@@ -105,64 +105,68 @@ else
     fi
 fi
 
-installed_plugins=''
+installed_plugins=()
 
 if [[ -n "${SITE_PLUGINS:-}" ]]; then
     e_start 'Set up default Plugins'
     SITE_PLUGINS=${SITE_PLUGINS:-''}
-    plugins=''
+    plugins=()
 
     for plugin in ${SITE_PLUGINS//,/ }; do
         if _wp plugin is-installed "$plugin"; then
-            echo " - $plugin is already installed."
+            echo -e "\e[1;36mNotice:\e[0m '$plugin' is already installed."
             continue
         fi
 
         plugin_version="${plugin_supports[$plugin]:-}"
         if [[ "$plugin_version" == "none" ]]; then
-            echo " - Skipping $plugin: incompatible with WordPress ${WP_VERSION}"
+            echo -e "\e[1;36mNotice:\e[0m Skipping '$plugin' - incompatible with WordPress ${WP_VERSION}"
             continue
         fi
 
         if [[ -n "$plugin_version" ]]; then
-            _wp plugin install "$plugin" --version=$plugin_version
-            installed_plugins="$installed_plugins $plugin"
+            echo -e "\e[1;36mInfo:\e[0m Installing '$plugin' (v$plugin_version)"
+            _wp plugin install "$plugin" --version="$plugin_version" --quiet
+            installed_plugins+=("$plugin")
 
             continue
         fi
 
-        plugins="$plugins $plugin"
+        plugins+=("$plugin")
     done
 
-    if [[ -n "$plugins" ]]; then
-        _wp plugin install $plugins
+    if ((${#plugins[@]} != 0 )); then
+        echo -e "\e[1;36mInfo:\e[0m Installing ${plugins[@]} (latest)"
+        _wp plugin install ${plugins[@]} --quiet
 
-        installed_plugins="$installed_plugins $plugins"
+        installed_plugins+=("${plugins[@]}")
     fi
 
-    _wp plugin activate $installed_plugins
+    if ((${#installed_plugins[@]} != 0 )); then
+        _wp plugin activate ${installed_plugins[@]} --color
+    fi
     e_end
 fi
 
 if _wp plugin is-active woocommerce; then
     e_start "Set up WooCommerce"
-    _wp option update woocommerce_store_address "${WC_STORE_ADDRESS:-'Jl. Example No. 123'}"
-    _wp option update woocommerce_store_city "${WC_STORE_CITY:-'Batang'}"
-    _wp option update woocommerce_default_country "${WC_DEFAULT_COUNTRY:-'ID:JT'}"
-    _wp option update woocommerce_currency "${WC_CURRENCY:-'IDR'}"
-    _wp option update woocommerce_store_postcode "${WC_STORE_POSTCODE:-'12345'}"
+    _wp option update woocommerce_store_address "${WC_STORE_ADDRESS:-'Jl. Example No. 123'}" --color
+    _wp option update woocommerce_store_city "${WC_STORE_CITY:-'Batang'}" --color
+    _wp option update woocommerce_default_country "${WC_DEFAULT_COUNTRY:-'ID:JT'}" --color
+    _wp option update woocommerce_currency "${WC_CURRENCY:-'IDR'}" --color
+    _wp option update woocommerce_store_postcode "${WC_STORE_POSTCODE:-'12345'}" --color
 
-    _wp option update woocommerce_weight_unit "${WC_WEIGHT_UNIT:-kg}"
-    _wp option update woocommerce_dimension_unit "${WC_DIMENSION_UNIT:-cm}"
-    _wp option update woocommerce_price_thousand_sep "${WC_PRICE_THOUSAND_SEP:-.}"
-    _wp option update woocommerce_price_decimal_sep "${WC_PRICE_DECIMAL_SEP:-,}"
-    _wp option update woocommerce_price_num_decimals "${WC_PRICE_DECIMAL_NUM:-0}"
+    _wp option update woocommerce_weight_unit "${WC_WEIGHT_UNIT:-kg}" --color
+    _wp option update woocommerce_dimension_unit "${WC_DIMENSION_UNIT:-cm}" --color
+    _wp option update woocommerce_price_thousand_sep "${WC_PRICE_THOUSAND_SEP:-.}" --color
+    _wp option update woocommerce_price_decimal_sep "${WC_PRICE_DECIMAL_SEP:-,}" --color
+    _wp option update woocommerce_price_num_decimals "${WC_PRICE_DECIMAL_NUM:-0}" --color
 
     # Skip the onboarding profile
-    _wp option update woocommerce_onboarding_profile '{"skipped":true}' --format=json
+    _wp option update woocommerce_onboarding_profile '{"skipped":true}' --format=json --color
 
     # Mark the task list as complete
-    _wp option update woocommerce_task_list_complete yes
+    _wp option update woocommerce_task_list_complete yes --color
     e_end
 fi
 
@@ -173,10 +177,10 @@ if [[ ${MULTISITE_ENABLED:-0} -eq 1 ]]; then
     cat "$ASSET_DIR/.htaccess.multisite" > "$INSTALL_DIR/.htaccess"
     echo 'Update .htaccess.'
 
-    _wp core multisite-convert
+    _wp core multisite-convert --color
 
-    if [[ -n "$installed_plugins" ]]; then
-        _wp plugin activate $installed_plugins --network
+    if ((${#installed_plugins[@]} != 0 )); then
+        _wp plugin activate ${installed_plugins[@]} --network --color
     fi
     e_end
 fi
@@ -207,20 +211,20 @@ if [[ -n "${SITE_THEMES:-}" ]]; then
     done
 
     if [[ -n "$themes" ]]; then
-        _wp theme install $themes
+        _wp theme install $themes --color
     fi
 
     SITE_DEFAULT_THEME=${SITE_DEFAULT_THEME:-}
 
     if [[ -n "$SITE_DEFAULT_THEME" ]] && _wp theme is-installed "$SITE_DEFAULT_THEME"; then
-        _wp theme activate $SITE_DEFAULT_THEME
+        _wp theme activate $SITE_DEFAULT_THEME --color
     fi
     e_end
 fi
 
 e_start 'Cleanup'
 if _wp plugin is-installed hello; then
-    _wp plugin uninstall hello
+    _wp plugin uninstall hello --color
 fi
 e_end
 
