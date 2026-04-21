@@ -21,9 +21,9 @@ wpcf7_map['7.0']='6.1'
 
 # Reduce to major.minor for map lookup
 WP_VERSION=${WP_VERSION:-'5.9'}
-WP_VERSION=$(echo "${WP_VERSION}" | awk -F. '{printf "%s.%s", $1, $2}')
 
-CF7_VERSION=${wpcf7_map[${WP_VERSION}]:-'6.1'}
+wpcf7_key=$(echo "${WP_VERSION}" | awk -F. '{printf "%s.%s", $1, $2}')
+CF7_VERSION=${wpcf7_map[${wpcf7_key}]:-'6.1'}
 
 ASSET_DIR=${ASSET_DIR:-"$PWD/assets"}
 INSTALL_DIR=${INSTALL_DIR:-"$PWD/docker/volumes/wordpress"}
