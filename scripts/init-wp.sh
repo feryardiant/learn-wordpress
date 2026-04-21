@@ -103,8 +103,14 @@ if [[ -n "${SITE_PLUGINS:-}" ]]; then
             continue
         fi
 
-        if [[ -n "${plugin_supports[$plugin]:-}" ]]; then
-            _wp plugin install "$plugin" --version=${plugin_supports[$plugin]} --activate
+        version="${plugin_supports[$plugin]:-}"
+        if [[ "$version" == "none" ]]; then
+            echo " - Skipping $plugin: incompatible with WordPress ${WP_VERSION}"
+            continue
+        fi
+
+        if [[ -n "$version" ]]; then
+            _wp plugin install "$plugin" --version=$version --activate
 
             installed_plugins="$installed_plugins $plugin"
             continue
