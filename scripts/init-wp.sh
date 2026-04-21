@@ -4,40 +4,64 @@ set -euo pipefail
 
 . "$(dirname "$0")/_util.sh"
 
-declare -A wpcf7_map
+declare -A plugins_map
 
-wpcf7_map['5.9']='5.6'
-wpcf7_map['6.0']='5.7'
-wpcf7_map['6.1']='5.7'
-wpcf7_map['6.2']='5.8'
-wpcf7_map['6.3']='5.9'
-wpcf7_map['6.4']='5.9'
-wpcf7_map['6.5']='5.9'
-wpcf7_map['6.6']='6.0'
-wpcf7_map['6.7']='6.1'
-wpcf7_map['6.8']='6.1'
-wpcf7_map['6.9']='6.1'
-wpcf7_map['7.0']='6.1'
+                  #                 Plugin  Woo     Blocksy
+                  # CF7     JetPack Check   Comm.   Comp.
+plugins_map['5.9']='5.6.0	15.7.1	1.9.0	10.6.2	2.0.0'
+plugins_map['6.0']='5.7.0	15.7.1	1.9.0	10.6.2	2.0.0'
+plugins_map['6.1']='5.7.0	15.7.1	1.9.0	10.6.2	2.0.0'
+plugins_map['6.2']='5.8.0	15.7.1	1.9.0	10.6.2	2.0.0'
+plugins_map['6.3']='5.9.0	15.7.1	1.9.0	10.6.2	2.0.0'
+plugins_map['6.4']='5.9.0	15.7.1	1.9.0	10.6.2	2.0.0'
+plugins_map['6.5']='5.9.0	15.7.1	1.9.0	10.6.2	2.1.38'
+plugins_map['6.6']='6.0.0	15.7.1	1.9.0	10.6.2	2.1.38'
+plugins_map['6.7']='6.1.0	15.7.1	1.9.0	10.6.2	2.1.38'
+plugins_map['6.8']='6.1.0	15.7.1	1.9.0	10.6.2	2.1.38'
+plugins_map['6.9']='6.1.5	15.7.1	1.9.0	10.6.2	2.1.38'
+plugins_map['7.0']='6.1.5	15.7.1	1.9.0	10.6.2	2.1.38'
 
-# Reduce to major.minor for map lookup
+if [[ -f "$PWD/.env" ]]; then
+    . "$PWD/.env"
+fi
+
 WP_VERSION=${WP_VERSION:-'5.9'}
+# Reduce to major.minor for map lookup
+wp_version_key=$(echo "${WP_VERSION}" | awk -F. '{printf "%s.%s", $1, $2}')
+wp_plugins=(${plugins_map[${wp_version_key}]//\t/ })
 
-wpcf7_key=$(echo "${WP_VERSION}" | awk -F. '{printf "%s.%s", $1, $2}')
-CF7_VERSION=${wpcf7_map[${wpcf7_key}]:-'6.1'}
+declare -A plugin_supports
+
+# ContactForm7
+plugin_supports['contact-form-7']="${wp_plugins[0]:-6.1.5}"
+# JetPack
+plugin_supports['jetpack']="${wp_plugins[1]:-15.7.1}"
+# PluginCheck
+plugin_supports['plugin-check']="${wp_plugins[2]:-1.9.0}"
+# WooCommerce
+plugin_supports['woocommerce']="${wp_plugins[3]:-10.6.2}"
+# BlocksyCompanion
+plugin_supports['blocksy-compnaion']="${wp_plugins[4]:-2.1.38}"
 
 ASSET_DIR=${ASSET_DIR:-"$PWD/assets"}
 INSTALL_DIR=${INSTALL_DIR:-"$PWD/docker/volumes/wordpress"}
 
 SITE_URL=${SITE_URL:-'http://localhost'}
 
+if [[ ${WP_RESET:-0} -eq 1 ]]; then
+    e_start "Reset WordPress Core"
+    rm -rf "$INSTALL_DIR"
+    e_end
+fi
+
 if [[ ! -d "${INSTALL_DIR}" ]]; then
-    e_start 'Download Core'
+    e_start 'Download WordPress Core'
     _wp core download --version=${WP_VERSION}
     e_end
 fi
 
 if [[ ! -f "${INSTALL_DIR}/wp-config.php" ]]; then
-    e_start 'Configure Core'
+    e_start 'Configure WordPress Core'
     _wp config create \
         --dbhost=${DB_HOST:-127.0.0.1:3306} --dbname=${DB_NAME:-wordpress} \
         --dbuser=${DB_USER:-sampleuser} --dbpass=${DB_PASS:-samplepass}
@@ -47,7 +71,7 @@ fi
 if _wp core is-installed --url="${SITE_URL}" --allow-root; then
   echo "WordPress is already installed."
 else
-    e_start 'Install Core'
+    e_start 'Install WordPress Core'
     _wp core install \
         --url="${SITE_URL}" --title="${SITE_TITLE:-'WordPress Local'}" \
         --admin_user=${SITE_ADMIN_USER:-admin} \
@@ -56,7 +80,7 @@ else
         --skip-email --allow-root
     e_end
 
-    e_start 'Set options'
+    e_start 'Set up default options'
     _wp option update permalink_structure "/%postname%/"
     _wp option update timezone_string "${SITE_TIMEZONE:-Asia/Jakarta}"
     e_end
@@ -66,10 +90,12 @@ else
     fi
 fi
 
+installed_plugins=''
+
 if [[ -n "${SITE_PLUGINS:-}" ]]; then
-    e_start 'Install default Plugins'
+    e_start 'Set up default Plugins'
     SITE_PLUGINS=${SITE_PLUGINS:-''}
-    plugins=""
+    plugins=''
 
     for plugin in ${SITE_PLUGINS//,/ }; do
         if _wp plugin is-installed "$plugin"; then
@@ -77,8 +103,10 @@ if [[ -n "${SITE_PLUGINS:-}" ]]; then
             continue
         fi
 
-        if [[ "$plugin" == "contact-form-7" ]]; then
-            _wp plugin install contact-form-7 --version=${CF7_VERSION} --activate
+        if [[ -n "${plugin_supports[$plugin]:-}" ]]; then
+            _wp plugin install "$plugin" --version=${plugin_supports[$plugin]} --activate
+
+            installed_plugins="$installed_plugins $plugin"
             continue
         fi
 
@@ -87,12 +115,14 @@ if [[ -n "${SITE_PLUGINS:-}" ]]; then
 
     if [[ -n "$plugins" ]]; then
         _wp plugin install $plugins --activate
+
+        installed_plugins="$installed_plugins $plugins"
     fi
     e_end
 fi
 
 if _wp plugin is-active woocommerce; then
-    e_start "Configure WooCommerce"
+    e_start "Set up WooCommerce"
     _wp option update woocommerce_store_address "${WC_STORE_ADDRESS:-'Jl. Example No. 123'}"
     _wp option update woocommerce_store_city "${WC_STORE_CITY:-'Batang'}"
     _wp option update woocommerce_default_country "${WC_DEFAULT_COUNTRY:-'ID:JT'}"
@@ -114,7 +144,7 @@ if _wp plugin is-active woocommerce; then
 fi
 
 if [[ ${MULTISITE_ENABLED:-0} -eq 1 ]]; then
-    e_start "Configure multisite"
+    e_start "Set up MultiSite"
 
     # https://developer.wordpress.org/advanced-administration/server/web-server/httpd/#multisite
     cat "$ASSET_DIR/.htaccess.multisite" > "$INSTALL_DIR/.htaccess"
@@ -122,12 +152,14 @@ if [[ ${MULTISITE_ENABLED:-0} -eq 1 ]]; then
 
     _wp core multisite-convert
 
-    _wp plugin activate $plugins --network
+    if [[ -n "$installed_plugins" ]]; then
+        _wp plugin activate $installed_plugins --network
+    fi
     e_end
 fi
 
 if [[ -n "${SITE_THEMES:-}" ]]; then
-    e_start 'Install default themes'
+    e_start 'Set up default themes'
     themes=""
 
     for theme in ${SITE_THEMES//,/ }; do
@@ -157,7 +189,7 @@ if _wp plugin is-installed hello; then
 fi
 e_end
 
-e_start 'Verify'
+e_start 'Verify Installation'
 _wp core version --extra
 echo "Site URL: ${SITE_URL}"
 e_end
