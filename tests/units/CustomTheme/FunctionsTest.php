@@ -33,7 +33,7 @@ class FunctionsTest extends BaseTestCase
             });
 
         // Load the file to trigger add_action calls
-        require_once $this->packageFile('custom-theme/functions.php');
+        require $this->packageFile('custom-theme/functions.php');
     }
 
     /**
