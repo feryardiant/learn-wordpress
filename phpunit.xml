@@ -11,11 +11,11 @@
          cacheResult="false">
     <testsuites>
         <testsuite name="CF7 Entry Manager">
-            <directory>tests/*/CF7_Entry_Manager</directory>
+            <directory>tests/*/CF7EntryManager</directory>
         </testsuite>
 
         <testsuite name="Custom Theme">
-            <directory>tests/*/Custom_Theme</directory>
+            <directory>tests/*/CustomTheme</directory>
         </testsuite>
     </testsuites>
 
@@ -28,15 +28,11 @@
 
     <source>
         <include>
-            <directory suffix=".php">packages/cf7-entry-manager/includes</directory>
-            <file>packages/cf7-entry-manager/cf7-entry-manager.php</file>
-
-            <directory suffix=".php">packages/custom-theme</directory>
+            <directory suffix=".php">packages</directory>
         </include>
 
         <exclude>
-            <directory>packages/cf7-entry-manager/vendor</directory>
-            <directory>packages/custom-theme/vendor</directory>
+            <directory>packages/*/vendor</directory>
         </exclude>
     </source>
 
