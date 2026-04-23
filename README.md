@@ -67,7 +67,6 @@ This project is organized as a **monorepo** to simplify the development of multi
 - [`docker/`](docker/): Local MySQL data and service configurations.
 - [`packages/`](packages/): Local themes and plugins (e.g., [`cf7-entry-manager`](packages/cf7-entry-manager)).
 - [`scripts/`](scripts/): Development utilities (Installation, POT generation, Distribution).
-- [`volumes/`](volumes/): Persisted data for WordPress, MySQL, and Mailpit.
 
 ## 🛠️ Development Tools
 
