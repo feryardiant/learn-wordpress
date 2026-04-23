@@ -64,6 +64,7 @@
     },
     "autoload-dev": {
         "psr-4": {
+            "Fixtures\\": "tests/fixtures",
             "UnitTests\\": "tests/units",
             "IntegrationTests\\": "tests/integrations"
         }

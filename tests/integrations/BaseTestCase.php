@@ -4,13 +4,12 @@ declare(strict_types=1);
 
 namespace IntegrationTests;
 
-use Brain\Monkey;
-use PHPUnit\Framework\TestCase as PHPUnitTestCase;
+use Fixtures\TestCase;
 
 /**
  * Base Test Case for integration tests using real WordPress core.
  */
-abstract class BaseTestCase extends PHPUnitTestCase
+abstract class BaseTestCase extends TestCase
 {
     /**
      * Setup before any test in this class runs.
@@ -36,27 +35,5 @@ abstract class BaseTestCase extends PHPUnitTestCase
 
         // Start up the WP testing environment.
         // require $_tests_dir . '/includes/bootstrap.php';
-    }
-
-    /**
-     * Setup the test environment.
-     *
-     * @return void
-     */
-    protected function setUp(): void
-    {
-        parent::setUp();
-        Monkey\setUp();
-    }
-
-    /**
-     * Tear down the test environment.
-     *
-     * @return void
-     */
-    protected function tearDown(): void
-    {
-        Monkey\tearDown();
-        parent::tearDown();
     }
 }
