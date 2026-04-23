@@ -25,40 +25,29 @@ defined( 'ABSPATH' ) || exit;
 
 define( 'CF7EM_VERSION', '0.1.0' );
 define( 'CF7EM_DEBUG', defined( 'WP_DEBUG' ) && boolval( WP_DEBUG ) );
+
 define( 'CF7EM__MINIMUM_WP_VERSION', '6.0' );
+define( 'CF7EM__MINIMUM_WPCF7_VERSION', '6.1' );
 define( 'CF7EM__MINIMUM_PHP_VERSION', '8.1' );
 
 /**
  * Check if the version of WordPress in use on the site is supported by Entry Manager for Contact Form 7.
  */
 if ( version_compare( PHP_VERSION, CF7EM__MINIMUM_PHP_VERSION, '<' ) ) {
-	if ( CF7EM_DEBUG ) {
-		// phpcs:ignore WordPress.PHP.DevelopmentFunctions.error_log_error_log
-		error_log(
-			sprintf(
-				/* translators: Placeholders are numbers, versions of PHP in use on the site, and required by Entry Manager for Contact Form 7 plugin. */
-				esc_html__( 'Your version of PHP (%1$s) is lower than the version required by Entry Manager for Contact Form 7 (%2$s). Please update PHP to continue enjoying Entry Manager for Contact Form 7.', 'cf7-entry-manager' ),
-				PHP_VERSION,
-				CF7EM__MINIMUM_PHP_VERSION
-			)
-		);
-	}
-
 	add_action(
 		'admin_notices',
 		static function () {
-			?>
-		<div class="notice notice-error is-dismissible">
-			<p>
-			<?php
-			esc_html_e(
-				'Entry Manager for Contact Form 7 requires a more recent version of PHP and has been paused. Please update PHP to continue enjoying Entry Manager for Contact Form 7.',
-				'cf7-entry-manager'
+			echo '<div class="notice notice-error is-dismissible"><p>';
+
+			// phpcs:disable WordPress.Security.EscapeOutput
+			printf(
+				/* translators: %s: version of PHP required by Entry Manager for Contact Form 7 plugin. */
+				__( 'Entry <strong>Manager for Contact Form 7</strong> requires at least version <strong>%s</strong> of <strong>PHP</strong> and has been paused.', 'cf7-entry-manager' ),
+				CF7EM__MINIMUM_PHP_VERSION
 			);
-			?>
-			</p>
-		</div>
-			<?php
+			// phpcs:enable
+
+			echo '</p></div>';
 		}
 	);
 
@@ -69,33 +58,20 @@ if ( version_compare( PHP_VERSION, CF7EM__MINIMUM_PHP_VERSION, '<' ) ) {
  * Check if the version of WordPress in use on the site is supported by Entry Manager for Contact Form 7.
  */
 if ( version_compare( $GLOBALS['wp_version'], CF7EM__MINIMUM_WP_VERSION, '<' ) ) {
-	if ( CF7EM_DEBUG ) {
-		// phpcs:ignore WordPress.PHP.DevelopmentFunctions.error_log_error_log
-		error_log(
-			sprintf(
-				/* translators: Placeholders are numbers, versions of WordPress in use on the site, and required by Entry Manager for Contact Form 7 plugin. */
-				esc_html__( 'Your version of WordPress (%1$s) is lower than the version required by Entry Manager for Contact Form 7 (%2$s). Please update WordPress to continue enjoying Entry Manager for Contact Form 7.', 'cf7-entry-manager' ),
-				$GLOBALS['wp_version'],
-				CF7EM__MINIMUM_WP_VERSION
-			)
-		);
-	}
-
 	add_action(
 		'admin_notices',
 		static function () {
-			?>
-		<div class="notice notice-error is-dismissible">
-			<p>
-			<?php
-			esc_html_e(
-				'Entry Manager for Contact Form 7 requires a more recent version of WordPress and has been paused. Please update WordPress to continue enjoying Entry Manager for Contact Form 7.',
-				'cf7-entry-manager'
+			echo '<div class="notice notice-error is-dismissible"><p>';
+
+			// phpcs:disable WordPress.Security.EscapeOutput
+			printf(
+				/* translators: %s: version of WordPress required by Entry Manager for Contact Form 7 plugin. */
+				__( 'Entry <strong>Manager for Contact Form 7</strong> requires at least version <strong>%s</strong> of <strong>WordPress</strong> and has been paused.', 'cf7-entry-manager' ),
+				CF7EM__MINIMUM_WP_VERSION
 			);
-			?>
-				</p>
-		</div>
-			<?php
+			// phpcs:enable
+
+			echo '</p></div>';
 		}
 	);
 
@@ -132,6 +108,30 @@ add_action(
 add_action(
 	'wpcf7_init',
 	static function () {
+		/**
+		 * Check if the version of Contact Form 7 in use on the site is supported by Entry Manager for Contact Form 7.
+		 */
+		if ( version_compare( WPCF7_VERSION, CF7EM__MINIMUM_WPCF7_VERSION, '<' ) ) {
+			add_action(
+				'admin_notices',
+				static function () {
+					echo '<div class="notice notice-error is-dismissible"><p>';
+
+					// phpcs:disable WordPress.Security.EscapeOutput
+					printf(
+						/* translators: %s: version of Contact Form 7 required by Entry Manager for Contact Form 7 plugin. */
+						__( 'Entry <strong>Manager for Contact Form 7</strong> requires at least version <strong>%s</strong> of <strong>Contact Form 7</strong> and has been paused.', 'cf7-entry-manager' ),
+						CF7EM__MINIMUM_WPCF7_VERSION
+					);
+					// phpcs:enable
+
+					echo '</p></div>';
+				}
+			);
+
+			return;
+		}
+
 		if ( file_exists( __DIR__ . '/vendor/autoload.php' ) ) {
 			require_once __DIR__ . '/vendor/autoload.php';
 		}
